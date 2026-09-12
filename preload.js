@@ -20,6 +20,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onInitAnchor: (callback) => {
     ipcRenderer.on('init-anchor', (_event, anchorX) => callback(anchorX));
   },
+  onCursorPos: (callback) => {
+    ipcRenderer.on('cursor-pos', (_event, pos) => callback(pos));
+  },
 
   quitApp: () => {
     ipcRenderer.send('quit-app');

@@ -94,6 +94,29 @@ function sendAnchorPosition() {
   }
 }
 
+let cursorPollTimer = null;
+
+function startCursorPolling() {
+  if (cursorPollTimer) return;
+  cursorPollTimer = setInterval(() => {
+    if (mainWindow && !mainWindow.isDestroyed() && mainWindow.isVisible()) {
+      const pt = screen.getCursorScreenPoint();
+      const bounds = mainWindow.getBounds();
+      // Translate global screen coordinates to window client coordinates
+      const relX = pt.x - bounds.x;
+      const relY = pt.y - bounds.y;
+      mainWindow.webContents.send('cursor-pos', { x: relX, y: relY });
+    }
+  }, 16); // ~60fps responsive tracking
+}
+
+function stopCursorPolling() {
+  if (cursorPollTimer) {
+    clearInterval(cursorPollTimer);
+    cursorPollTimer = null;
+  }
+}
+
 function toggleWindow() {
   if (!mainWindow) return;
 
@@ -101,10 +124,12 @@ function toggleWindow() {
   lastTrayClickTime = now;
 
   if (mainWindow.isVisible()) {
+    stopCursorPolling();
     mainWindow.hide();
   } else {
     mainWindow.showInactive();
     sendAnchorPosition();
+    startCursorPolling();
   }
 }
 
@@ -133,6 +158,12 @@ function buildTrayMenu() {
           click: () => switchCharm('drishti')
         },
         {
+          label: '👺 Drishti Bommai (Old)',
+          type: 'radio',
+          checked: state.activeCharm === 'drishti_old',
+          click: () => switchCharm('drishti_old')
+        },
+        {
           label: '🎋 Daruma Doll (Wishing Charm)',
           type: 'radio',
           checked: state.activeCharm === 'daruma',
@@ -143,6 +174,12 @@ function buildTrayMenu() {
           type: 'radio',
           checked: state.activeCharm === 'nazar',
           click: () => switchCharm('nazar')
+        },
+        {
+          label: '🖐️ Hamsa (Hand of Protection)',
+          type: 'radio',
+          checked: state.activeCharm === 'hamsa',
+          click: () => switchCharm('hamsa')
         },
         {
           label: '🪶 Dreamcatcher (Native American)',
@@ -294,6 +331,7 @@ app.whenReady().then(() => {
   createWindow();
   setupGlobalShortcut();
   mainWindow.showInactive();
+  startCursorPolling();
 });
 
 app.on('window-all-closed', (event) => {
@@ -305,5 +343,6 @@ app.on('window-all-closed', (event) => {
 });
 
 app.on('will-quit', () => {
+  stopCursorPolling();
   globalShortcut.unregisterAll();
 });

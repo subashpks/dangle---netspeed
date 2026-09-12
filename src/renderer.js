@@ -278,37 +278,59 @@ Composite.add(engine.world, mouseConstraint);
 render.mouse = mouse;
 
 let isIgnoringMouse = false;
+let isMouseDown = false;
 let currentMousePos = { x: -9999, y: -9999, active: false };
+let prevMousePos = { x: -9999, y: -9999, time: 0 };
+let mouseVelocity = { x: 0, y: 0 };
 let lastIpcCallTime = 0;
+let caughtUntil = 0; // Timestamp until which charm evasion is suppressed after being caught
 
-window.addEventListener('mousemove', (e) => {
-  currentMousePos.x = e.clientX;
-  currentMousePos.y = e.clientY;
+// Track mouse down / up across canvas and window to guarantee drag immunity
+window.addEventListener('mousedown', () => {
+  isMouseDown = true;
+  if (isIgnoringMouse && window.electronAPI && window.electronAPI.setIgnoreMouseEvents) {
+    isIgnoringMouse = false;
+    window.electronAPI.setIgnoreMouseEvents(false);
+  }
+});
+
+window.addEventListener('mouseup', () => {
+  isMouseDown = false;
+});
+
+function updateMousePosition(mx, my) {
+  const now = performance.now();
+  if (prevMousePos.time > 0) {
+    const dt = Math.max(1, now - prevMousePos.time);
+    // Smooth exponential velocity filter
+    const vx = ((mx - prevMousePos.x) / dt) * 16.67;
+    const vy = ((my - prevMousePos.y) / dt) * 16.67;
+    mouseVelocity.x = mouseVelocity.x * 0.4 + vx * 0.6;
+    mouseVelocity.y = mouseVelocity.y * 0.4 + vy * 0.6;
+  }
+  prevMousePos.x = mx;
+  prevMousePos.y = my;
+  prevMousePos.time = now;
+
+  currentMousePos.x = mx;
+  currentMousePos.y = my;
   currentMousePos.active = true;
 
   if (!charmBody || !window.electronAPI || !window.electronAPI.setIgnoreMouseEvents) return;
 
-  const mx = e.clientX;
-  const my = e.clientY;
   const charmDef = CHARMS[currentCharmId];
-
-  // Hit test against charm body & suspension cord
   const charmR = charmDef?.radius || 48;
   const distToCharm = Math.hypot(mx - charmBody.position.x, my - charmBody.position.y);
-  
-  // If charm has reluctance enabled, expand capture radius so approaching cursor exerts reluctance
-  const reluctanceZone = charmDef?.reluctance?.enabled ? charmDef.reluctance.triggerRadius + 20 : 0;
-  // Bounding check covers charm radius plus top accessories/beads up to knotOffset, and bottom feathers
-  const topBound = charmDef?.knotOffset ? charmBody.position.y + charmDef.knotOffset - 12 : charmBody.position.y - 60;
-  const bottomExtra = currentCharmId === 'dreamcatcher' ? 95 : 10;
-  const isNearCharm = distToCharm <= Math.max(charmR + 20, reluctanceZone) ||
-                      (Math.abs(mx - charmBody.position.x) <= 46 &&
-                       my >= topBound && my <= charmBody.position.y + charmR + bottomExtra);
-  const isNearThread = my >= 0 && my <= charmBody.position.y && Math.abs(mx - startX) <= 24;
 
-  const shouldCapture = isNearCharm || isNearThread || !!mouseConstraint.body;
+  // Generous interaction capture zone:
+  // Captures pointer when within 115px of charm center, or within bottom bead/tassel region (up to +115px below),
+  // or near the suspension thread, OR whenever mouse is pressed/dragged.
+  const captureRadius = Math.max(charmR + 50, 115);
+  const isNearCharm = distToCharm <= captureRadius || 
+    (Math.abs(mx - charmBody.position.x) <= 45 && my >= charmBody.position.y && my <= charmBody.position.y + 115);
+  const isNearThread = my >= 0 && my <= charmBody.position.y && Math.abs(mx - startX) <= 30;
+  const shouldCapture = isMouseDown || isNearCharm || isNearThread || !!mouseConstraint.body;
 
-  const now = performance.now();
   if (shouldCapture && isIgnoringMouse) {
     isIgnoringMouse = false;
     lastIpcCallTime = now;
@@ -318,22 +340,42 @@ window.addEventListener('mousemove', (e) => {
     lastIpcCallTime = now;
     window.electronAPI.setIgnoreMouseEvents(true, true);
   }
+}
+
+// 1. Local window mousemove listener
+window.addEventListener('mousemove', (e) => {
+  updateMousePosition(e.clientX, e.clientY);
 });
 
+// 2. Global screen cursor listener via Electron IPC
+if (window.electronAPI && window.electronAPI.onCursorPos) {
+  window.electronAPI.onCursorPos((pos) => {
+    if (pos && typeof pos.x === 'number' && typeof pos.y === 'number') {
+      updateMousePosition(pos.x, pos.y);
+    }
+  });
+}
+
 window.addEventListener('mouseleave', () => {
-  currentMousePos.active = false;
-  if (!isIgnoringMouse && window.electronAPI && window.electronAPI.setIgnoreMouseEvents) {
-    isIgnoringMouse = true;
-    window.electronAPI.setIgnoreMouseEvents(true, true);
+  if (!isMouseDown) {
+    setTimeout(() => {
+      if (performance.now() - prevMousePos.time > 250) {
+        currentMousePos.active = false;
+      }
+    }, 200);
   }
 });
 
-// Reluctance Physics Hook: Charm gently evades cursor when approached, unless dragged
+// Reluctance Physics Hook: Charms organically shy away, dodge, and tilt away from cursor
 Events.on(engine, 'beforeUpdate', () => {
   if (!charmBody || !currentMousePos.active) return;
   
-  // If user is actively dragging the charm with mouseConstraint, don't apply evasion
-  if (mouseConstraint.body) return;
+  // 1. Immediate Drag & Click Immunity: Zero evasion while user is dragging or holding mouse down
+  if (isMouseDown || mouseConstraint.body) return;
+
+  const now = performance.now();
+  // 2. Caught Window: If recently caught with a fast swipe, keep evasion suppressed so user can grab
+  if (now < caughtUntil) return;
 
   const charmDef = CHARMS[currentCharmId];
   if (!charmDef || !charmDef.reluctance || !charmDef.reluctance.enabled) return;
@@ -344,23 +386,53 @@ Events.on(engine, 'beforeUpdate', () => {
   const dist = Math.hypot(dx, dy);
 
   if (dist > 0 && dist < rel.triggerRadius) {
-    // Smooth cosine/cubic falloff curve: 1 at 0 distance, 0 at triggerRadius
-    const normalizedDist = dist / rel.triggerRadius;
-    const intensity = Math.pow(1 - normalizedDist, 1.8);
+    // 3. Fast Swipe Catch Detection:
+    // If the user quickly swipes towards the charm (> catch threshold), charm is caught!
+    const approachSpeed = -(dx * mouseVelocity.x + dy * mouseVelocity.y) / dist;
+    const catchThreshold = rel.catchSpeedThreshold || 6.8;
 
-    // Evasion unit vector pointing away from mouse
+    if (approachSpeed > catchThreshold) {
+      // Caught off-guard! Suppress evasion for 450ms so user can comfortably click or drag
+      caughtUntil = now + 450;
+      return;
+    }
+
+    // 4. Maximum Sideway Displacement Ceiling:
+    // If the charm is already pushed 65px away from its resting vertical anchor,
+    // taper off the evasion force so it playfully stays within reach rather than running away!
+    const offsetFromAnchor = Math.abs(charmBody.position.x - startX);
+    const displacementCeiling = 65;
+    const ceilingFactor = Math.max(0.1, 1.0 - Math.max(0, offsetFromAnchor - 35) / displacementCeiling);
+
+    // 5. Smooth Proximity Falloff Curve
+    const normalizedDist = dist / rel.triggerRadius;
+    const proximityIntensity = Math.pow(1 - normalizedDist, 1.4) * ceilingFactor;
+
+    if (proximityIntensity <= 0.005) return;
+
+    // Unit vector pointing away from mouse
     const nx = dx / dist;
     const ny = dy / dist;
 
-    // Apply repulsive force (stronger horizontally to induce natural pendulum sway)
-    const fx = nx * rel.maxForce * intensity;
-    const fy = ny * (rel.maxForce * 0.45) * intensity;
+    // Balanced responsive force
+    const fx = nx * rel.maxForce * proximityIntensity;
+    const fy = ny * (rel.maxForce * 0.4) * proximityIntensity;
 
+    // Apply repulsive evasion force to charm body
     Body.applyForce(charmBody, charmBody.position, { x: fx, y: fy });
 
-    // Slight defensive recoil tilt
+    // Distribute subtle arc force across lower cord links
+    if (chain && chain.bodies && chain.bodies.length > 0) {
+      const len = chain.bodies.length;
+      Body.applyForce(chain.bodies[len - 1], chain.bodies[len - 1].position, { x: fx * 0.4, y: fy * 0.2 });
+      if (len >= 2) {
+        Body.applyForce(chain.bodies[len - 2], chain.bodies[len - 2].position, { x: fx * 0.2, y: fy * 0.1 });
+      }
+    }
+
+    // Defensive/reactive recoil tilt
     if (rel.angularTorque) {
-      charmBody.torque += (nx > 0 ? 1 : -1) * rel.angularTorque * intensity;
+      charmBody.torque += (nx > 0 ? 1 : -1) * rel.angularTorque * proximityIntensity;
     }
   }
 });
@@ -434,7 +506,7 @@ Events.on(render, 'afterRender', () => {
     dash: [4, 3]
   };
 
-  const cordWidth = 3.2; // Universal standard thickness across all cords
+  const cordWidth = cordStyle.width || 3.2;
 
   // Pass 1: Soft Ambient Occlusion Shadow (optimized blur)
   ctx.save();
@@ -445,7 +517,7 @@ Events.on(render, 'afterRender', () => {
   ctx.shadowOffsetX = 1.8;
   ctx.shadowOffsetY = 3.2;
   ctx.strokeStyle = cordStyle.shadowColor;
-  ctx.lineWidth = cordWidth * 0.9; // 2.88px shadow core
+  ctx.lineWidth = cordWidth * 0.9; // Shadow core
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   ctx.stroke();
@@ -456,20 +528,24 @@ Events.on(render, 'afterRender', () => {
   ctx.beginPath();
   drawSpline(ctx, points, 0.65);
   ctx.strokeStyle = cordStyle.baseColor;
-  ctx.lineWidth = cordWidth; // Exactly 3.2px
+  ctx.lineWidth = cordWidth;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   ctx.stroke();
+  ctx.restore();
 
   // Pass 3: Braided Fiber / Silk Highlights
   if (cordStyle.highlightColor) {
+    ctx.save();
+    ctx.beginPath();
+    drawSpline(ctx, points, 0.65);
     ctx.strokeStyle = cordStyle.highlightColor;
-    ctx.lineWidth = 1.1; // 1.1px highlight twist
+    ctx.lineWidth = cordStyle.highlightWidth || 1.1; // Highlight twist
     ctx.setLineDash(cordStyle.dash || [4, 3]);
     ctx.stroke();
     ctx.setLineDash([]);
+    ctx.restore();
   }
-  ctx.restore();
 
   // Pass 4: Stem Knot & Loop (only for charms that have a rustic stem knot, e.g. Nimbu)
   if (cordStyle.hasKnotDot) {
@@ -493,10 +569,10 @@ Events.on(render, 'afterRender', () => {
   const extraAssets = getCharmExtraAssets(charmDef);
 
   if (img && img.complete && img.naturalWidth > 0) {
-    charmDef.renderCustom(ctx, charmBody, img, appState, extraAssets);
+    charmDef.renderCustom(ctx, charmBody, img, appState, extraAssets, currentMousePos);
   } else if (!charmDef.dataUri) {
     // Pure vector/canvas charm (e.g. Nazar evil eye)
-    charmDef.renderCustom(ctx, charmBody, null, appState, extraAssets);
+    charmDef.renderCustom(ctx, charmBody, null, appState, extraAssets, currentMousePos);
   } else {
     // Immediate fallback while bitmap loads
     ctx.beginPath();
