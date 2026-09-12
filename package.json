@@ -1,0 +1,64 @@
+{
+  "name": "lucky-dangle",
+  "version": "1.0.0",
+  "description": "A delightful physics-based macOS menu bar cultural charm dangle",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:mac": "electron-builder --mac dmg",
+    "build:win": "electron-builder --win nsis",
+    "build:all": "electron-builder -mw"
+  },
+  "keywords": ["macos", "windows", "menubar", "electron", "matterjs", "lucky-charm", "dangle"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "matter-js": "^0.20.0"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.luckydangle.app",
+    "productName": "Lucky Dangle",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["arm64"]
+        }
+      ],
+      "category": "public.app-category.utilities",
+      "icon": "assets/icon.icns"
+    },
+    "dmg": {
+      "backgroundColor": "#1a1a1a"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
