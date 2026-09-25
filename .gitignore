@@ -5,6 +5,8 @@ node_modules/
 dist/
 build/
 out/
+jinglee-dangles/dist/
+jinglee-dangles/public/downloads/
 
 # OS metadata
 .DS_Store

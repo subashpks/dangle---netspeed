@@ -12,8 +12,10 @@ import { realCharmsList } from './data/realCharmsCatalog';
 import { googleAuthService } from './services/googleAuthService';
 
 export default function App() {
-  // Sync initial page with URL hash if present
+  // Sync initial page with clean URL pathname
   const getInitialPage = () => {
+    const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+    if (path === 'downloads' || path === 'about' || path === 'profile') return path;
     const hash = window.location.hash.replace('#', '');
     if (hash === 'downloads' || hash === 'about' || hash === 'profile') return hash;
     return 'collections';
@@ -35,16 +37,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash === 'downloads' || hash === 'about' || hash === 'collections' || hash === 'profile') {
-        setActivePage(hash);
-        setIsZenMode(false); // Reset Zen mode on page switch
+    const handlePopState = () => {
+      const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+      if (path === 'downloads' || path === 'about' || path === 'collections' || path === 'profile') {
+        setActivePage(path);
+      } else {
+        setActivePage('collections');
       }
+      setIsZenMode(false);
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   // Gesture & Scroll listeners to restore background when user swipes up or scrolls
@@ -95,7 +99,10 @@ export default function App() {
   const handleNavigate = (pageId) => {
     setActivePage(pageId);
     setIsZenMode(false);
-    window.location.hash = pageId;
+    const targetPath = pageId === 'collections' ? '/' : `/${pageId}`;
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState({ page: pageId }, '', targetPath);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

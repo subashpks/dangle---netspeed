@@ -12,11 +12,12 @@ const platforms = [
     iconColor: '#1D1D1F',
     glowColor: '#B8860B',
     format: 'Universal DMG (.dmg)',
-    size: '84.2 MB',
+    size: '137 MB',
     security: 'Apple Gatekeeper Notarized',
     description: 'Native menubar utility. Hangs naturally beneath your Mac notch and screen edge with Apple Silicon hardware acceleration.',
     downloadActionName: 'Download for macOS (.dmg)',
-    downloadAlert: '🍎 Downloading Jinglee for macOS (Universal DMG)...'
+    fileUrl: '/downloads/Lucky Dangle-1.0.0-arm64.dmg',
+    fileName: 'Lucky-Dangle-1.0.0-mac.dmg'
   },
   {
     id: 'windows',
@@ -28,11 +29,12 @@ const platforms = [
     iconColor: '#0078D4',
     glowColor: '#0078D4',
     format: 'NSIS Installer (.exe)',
-    size: '78.5 MB',
+    size: '112 MB',
     security: 'Windows SmartScreen Verified',
     description: 'Runs silently in your Windows System Tray. Renders silky screen dangles with multi-monitor desktop support.',
     downloadActionName: 'Download for Windows (.exe)',
-    downloadAlert: '🪟 Downloading Jinglee for Windows (.exe)...'
+    fileUrl: '/downloads/Lucky Dangle Setup 1.0.0.exe',
+    fileName: 'Lucky-Dangle-Setup-1.0.0.exe'
   },
   {
     id: 'linux',
@@ -43,12 +45,13 @@ const platforms = [
     icon: Terminal,
     iconColor: '#E95420',
     glowColor: '#E95420',
-    format: 'Universal AppImage (.AppImage)',
-    size: '80.1 MB',
+    format: 'Universal Tarball (.tar.gz)',
+    size: '135 MB',
     security: 'GPG Signature Verified',
     description: 'Universal portable standalone binary with transparent compositor overlay support for Wayland and X11 desktops.',
-    downloadActionName: 'Download AppImage',
-    downloadAlert: '🐧 Downloading Jinglee for Linux (AppImage)...'
+    downloadActionName: 'Download for Linux (.tar.gz)',
+    fileUrl: '/downloads/lucky-dangle-1.0.0.tar.gz',
+    fileName: 'lucky-dangle-1.0.0.tar.gz'
   },
   {
     id: 'android',
@@ -60,11 +63,12 @@ const platforms = [
     iconColor: '#3DDC84',
     glowColor: '#3DDC84',
     format: 'Direct Package (.apk)',
-    size: '24.6 MB',
+    size: '33.2 MB',
     security: 'Google Play Protect Verified',
     description: 'Interactive screen talisman with gyroscopic tilt reaction, floating widget support, and countertop POS display modes.',
     downloadActionName: 'Download Android APK',
-    downloadAlert: '🤖 Downloading Jinglee for Android APK...'
+    fileUrl: '/downloads/Lucky Dangle-1.0.0.apk',
+    fileName: 'Lucky-Dangle-1.0.0.apk'
   }
 ];
 
@@ -129,14 +133,15 @@ export default function DownloadsPage() {
 
                 {/* Action Row */}
                 <div className="platform-action-row">
-                  <button
-                    type="button"
+                  <a
+                    href={platform.fileUrl}
+                    download={platform.fileName}
                     className="platform-download-cta"
-                    onClick={() => alert(platform.downloadAlert)}
+                    style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
                   >
                     <Download size={15} className="btn-icon" />
                     <span>{platform.downloadActionName}</span>
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
