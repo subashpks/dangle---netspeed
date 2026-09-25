@@ -1,0 +1,15 @@
+# Dependency directories
+node_modules/
+
+# Build artifacts and binaries (exceeds GitHub 100MB limit)
+dist/
+build/
+out/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Logs & scratch
+*.log
+scratch/

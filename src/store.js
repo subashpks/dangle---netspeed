@@ -6,7 +6,7 @@ const STATE_FILE = path.join(app.getPath('userData'), 'lucky-dangle-state.json')
 
 const DEFAULT_STATE = {
   activeCharm: 'nimbu',
-  anchorX: 150,
+  positionPreset: 'top-right',
   nimbuHungTime: Date.now(),
   drishtiPalette: 'crimson',
   darumaState: 0, // 0 = no eyes, 1 = one eye (wish made), 2 = both eyes (fulfilled)

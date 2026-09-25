@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Lucky Dangle</string>
+    <string name="title_activity_main">Lucky Dangle</string>
+    <string name="package_name">com.luckydangle.app</string>
+    <string name="custom_url_scheme">com.luckydangle.app</string>
+</resources>

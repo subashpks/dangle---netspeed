@@ -10,6 +10,669 @@
   <!-- Physics engine render canvas -->
   <canvas id="physics-canvas"></canvas>
 
+  <!-- Mobile Floating Quick-Switch Drawer (Opens on double-tap) -->
+  <div id="charm-drawer" class="charm-drawer hidden">
+    <div class="drawer-handle"></div>
+    <div class="drawer-header-bar">
+      <div class="drawer-title">Choose Your Dangle</div>
+      <button id="btn-device-pair" class="btn-device-pair-pill" title="Pair Device with Web Account">
+        <span>🔗 Link Device</span>
+      </button>
+    </div>
+    <div class="drawer-scroll">
+      <div class="charm-card" data-charm="balaji_classic">
+        <img src="balaji_classic.png" alt="Lord Venkateswara">
+        <span>Lord Balaji</span>
+      </div>
+      <div class="charm-card" data-charm="balaji_modern_1">
+        <img src="balaji_modern_1.png" alt="Modern Balaji Gold">
+        <span>Modern Balaji 1</span>
+      </div>
+      <div class="charm-card" data-charm="balaji_modern_2">
+        <img src="balaji_modern_2.png" alt="Modern Balaji Aura">
+        <span>Modern Balaji 2</span>
+      </div>
+      <div class="charm-card" data-charm="balaji_platinum">
+        <img src="balaji_platinum.png" alt="Platinum Balaji">
+        <span>Platinum Balaji</span>
+      </div>
+      <div class="charm-card" data-charm="krishna_flute">
+        <img src="krishna_flute.png" alt="Venugopala Krishna">
+        <span>Krishna</span>
+      </div>
+
+      <div class="charm-card" data-charm="durga_ma">
+        <img src="durga_ma.png" alt="Durga Ma Shakthi">
+        <span>Durga Ma</span>
+      </div>
+      <div class="charm-card" data-charm="hanuman_anjaneyar">
+        <img src="hanuman_anjaneyar.png" alt="Veera Anjaneyar">
+        <span>Hanuman</span>
+      </div>
+      <div class="charm-card" data-charm="ayyappa_swamy">
+        <img src="ayyappa_swamy.png" alt="Sabarimala Ayyappa">
+        <span>Ayyappa</span>
+      </div>
+      <div class="charm-card" data-charm="vedic_swastik">
+        <img src="vedic_swastik.png" alt="Sacred Vedic Swastik">
+        <span>Swastik</span>
+      </div>
+
+      <div class="charm-card" data-charm="christian_holy_cross">
+        <img src="christian_holy_cross.png" alt="Sacred Holy Cross">
+        <span>Holy Cross</span>
+      </div>
+      <div class="charm-card" data-charm="christian_siluvai_1">
+        <img src="christian_siluvai_1.png" alt="Golden Siluvai">
+        <span>Gold Siluvai</span>
+      </div>
+      <div class="charm-card" data-charm="christian_siluvai_2">
+        <img src="christian_siluvai_2.png" alt="Ornate Siluvai Cross">
+        <span>Siluvai Cross</span>
+      </div>
+      <div class="charm-card" data-charm="christian_cross_3">
+        <img src="christian_cross_3.png" alt="Radiant Cross Pendant">
+        <span>Radiant Cross</span>
+      </div>
+      <div class="charm-card" data-charm="christian_yesappa">
+        <img src="christian_yesappa.png" alt="Sacred Heart Yesappa">
+        <span>Yesappa</span>
+      </div>
+
+      <div class="charm-card" data-charm="islam_crescent">
+        <img src="islam_crescent.png" alt="Islamic Crescent & Star">
+        <span>Crescent & Star</span>
+      </div>
+      <div class="charm-card" data-charm="islam_mosque">
+        <img src="islam_mosque.png" alt="Golden Dome Mosque">
+        <span>Holy Mosque</span>
+      </div>
+      <div class="charm-card" data-charm="islam_mosque_1">
+        <img src="islam_mosque_1.png" alt="Masjid Al-Haram Gold">
+        <span>Masjid Al-Haram</span>
+      </div>
+      <div class="charm-card" data-charm="islam_calligraphy_medallion">
+        <img src="islam_calligraphy_medallion.png" alt="Allah Sacred Calligraphy">
+        <span>Allah Calligraphy</span>
+      </div>
+      <div class="charm-card" data-charm="islam_mosque_minaret">
+        <img src="islam_mosque_minaret.png" alt="Luminous Minaret Mosque">
+        <span>Minaret Mosque</span>
+      </div>
+      <div class="charm-card" data-charm="islam_crescent_lantern">
+        <img src="islam_crescent_lantern.png" alt="Golden Crescent & Lantern">
+        <span>Crescent Lantern</span>
+      </div>
+      <div class="charm-card" data-charm="islam_shahada_gold">
+        <img src="islam_shahada_gold.png" alt="Sacred Shahada Shield">
+        <span>Shahada Shield</span>
+      </div>
+      <div class="charm-card" data-charm="islam_crescent_floral">
+        <img src="islam_crescent_floral.png" alt="Filigree Crescent Moon">
+        <span>Filigree Moon</span>
+      </div>
+
+      <div class="charm-card" data-charm="murugan_vel_pendant">
+        <img src="murugan_vel_pendant.png" alt="Gnana Vel">
+        <span>Gnana Vel</span>
+      </div>
+      <div class="charm-card" data-charm="murugan_vel_mayil">
+        <img src="murugan_vel_mayil.png" alt="Mayil & Vel">
+        <span>Mayil & Vel</span>
+      </div>
+      <div class="charm-card" data-charm="murugan_yamirukka">
+        <img src="murugan_yamirukka.png" alt="Yamirukka">
+        <span>Yamirukka</span>
+      </div>
+      <div class="charm-card" data-charm="murugan_bayamen_badge">
+        <img src="murugan_bayamen_badge.png" alt="Bayamen">
+        <span>Bayamen</span>
+      </div>
+      <div class="charm-card" data-charm="shiva_gold_nataraj">
+        <img src="shiva_gold_nataraj.png" alt="Nataraja">
+        <span>Nataraja</span>
+      </div>
+      <div class="charm-card" data-charm="shiva_shivling">
+        <img src="shiva_shivling.png" alt="Shivling">
+        <span>Shivling</span>
+      </div>
+      <div class="charm-card" data-charm="shiva_gold_trishul">
+        <img src="shiva_gold_trishul.png" alt="Trishul">
+        <span>Trishul</span>
+      </div>
+      <div class="charm-card" data-charm="shiva_rudraksham">
+        <img src="shiva_rudraksham.png" alt="Rudraksha">
+        <span>Rudraksha</span>
+      </div>
+      <div class="charm-card" data-charm="sai_isai">
+        <img src="iSai.png" alt="iSai Meme">
+        <span>iSai</span>
+      </div>
+      <div class="charm-card" data-charm="meme_megan_fox">
+        <img src="meme_megan_fox.png" alt="Megan Fox">
+        <span>Megan Fox</span>
+      </div>
+      <div class="charm-card" data-charm="meme_sydney_sweeney">
+        <img src="meme_sydney_sweeney.png" alt="Sydney Sweeney">
+        <span>Sydney Sweeney</span>
+      </div>
+      <div class="charm-card" data-charm="meme_ajith">
+        <img src="meme_ajith.png" alt="Thala Ajith">
+        <span>Thala Ajith</span>
+      </div>
+      <div class="charm-card" data-charm="meme_vijay">
+        <img src="meme_vijay.png" alt="Vijay Action">
+        <span>Thalapathy</span>
+      </div>
+      <div class="charm-card" data-charm="meme_wamiqa">
+        <img src="meme_wamiqa.png" alt="Wamiqa Gabbi">
+        <span>Wamiqa</span>
+      </div>
+      <div class="charm-card" data-charm="sai_dwarkamai">
+        <img src="sai_1.png" alt="Dwarkamai Sai">
+        <span>Dwarkamai</span>
+      </div>
+      <div class="charm-card" data-charm="sai_samadhi">
+        <img src="sai_2.png" alt="Samadhi Mandir">
+        <span>Samadhi</span>
+      </div>
+      <div class="charm-card" data-charm="sai_silver">
+        <img src="sai_3.png" alt="Silver Sai">
+        <span>Silver Sai</span>
+      </div>
+      <div class="charm-card" data-charm="nimbu">
+        <img src="lemon_opt.png" alt="Nimbu">
+        <span>Nimbu</span>
+      </div>
+      <div class="charm-card" data-charm="nazar">
+        <img src="nazar_opt.png" alt="Nazar">
+        <span>Nazar</span>
+      </div>
+      <div class="charm-card" data-charm="daruma">
+        <img src="daruma_opt.png" alt="Daruma">
+        <span>Daruma</span>
+      </div>
+      <div class="charm-card" data-charm="drishti">
+        <img src="drishti.png" alt="Drishti">
+        <span>Drishti</span>
+      </div>
+      <div class="charm-card" data-charm="vettaiyaadu">
+        <img src="vettaiyaadu.png" alt="Vettaiyaadu Talisman">
+        <span>Vettaiyaadu</span>
+      </div>
+      <!-- Bubu & Dudu Collection -->
+      <div class="charm-card" data-charm="bubu_1">
+        <img src="bubu_1.png" alt="Bubu Blushing Heart">
+        <span>Bubu Heart</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_2">
+        <img src="bubu_2.png" alt="Bubu Joyful Wave">
+        <span>Bubu Wave</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_3">
+        <img src="bubu_3.png" alt="Bubu Cozy Pillow">
+        <span>Bubu Pillow</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_4">
+        <img src="bubu_4.png" alt="Bubu Happy Dance">
+        <span>Bubu Dance</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_5">
+        <img src="bubu_5.png" alt="Bubu Warm Winter Hat">
+        <span>Bubu Hat</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_6">
+        <img src="bubu_6.png" alt="Bubu Sweet Smile">
+        <span>Bubu Smile</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_7">
+        <img src="bubu_7.png" alt="Bubu Cheerful Hug">
+        <span>Bubu Hug</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_8">
+        <img src="bubu_8.png" alt="Bubu Sparkle Eyes">
+        <span>Bubu Sparkle</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_9">
+        <img src="bubu_9.png" alt="Bubu Playful Wink">
+        <span>Bubu Wink</span>
+      </div>
+      <div class="charm-card" data-charm="dudu_1">
+        <img src="dudu_1.png" alt="Dudu Gentle Brown Bear">
+        <span>Dudu Bear</span>
+      </div>
+      <div class="charm-card" data-charm="dudu_2">
+        <img src="dudu_2.png" alt="Dudu Sleepy Head">
+        <span>Dudu Sleepy</span>
+      </div>
+      <div class="charm-card" data-charm="dudu_3">
+        <img src="dudu_3.png" alt="Dudu Cool Sunglasses">
+        <span>Dudu Glasses</span>
+      </div>
+      <div class="charm-card" data-charm="dudu_4">
+        <img src="dudu_4.png" alt="Dudu Silly Winking Bear">
+        <span>Dudu Chuckle</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_dudu_pair_1">
+        <img src="bubu_dudu_pair_1.png" alt="Bubu & Dudu Sweetheart Hug">
+        <span>Sweetheart</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_dudu_pair_2">
+        <img src="bubu_dudu_pair_2.png" alt="Bubu & Dudu Cuddle Duo">
+        <span>Cuddle Duo</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_dudu_pair_3">
+        <img src="bubu_dudu_pair_3.png" alt="Bubu & Dudu Teatime Fun">
+        <span>Teatime Fun</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_dudu_pair_4">
+        <img src="bubu_dudu_pair_4.png" alt="Bubu & Dudu Beach Adventure">
+        <span>Beach Duo</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_dudu_pair_5">
+        <img src="bubu_dudu_pair_5.png" alt="Bubu & Dudu Straw Hat Trip">
+        <span>Straw Hat</span>
+      </div>
+      <div class="charm-card" data-charm="bubu_dudu_pair_6">
+        <img src="bubu_dudu_pair_6.png" alt="Bubu & Dudu Forever Friends">
+        <span>Forever Friends</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-App Dashboard (Visible when opening app, hidden during overlay) -->
+  <div id="app-dashboard" class="app-dashboard">
+    <div class="dash-header">
+      <div class="dash-badge">✨ Screen Dangles</div>
+      <h1>Lucky Dangle</h1>
+      <p>Select your sacred charm to hang gracefully on your screen across all apps.</p>
+    </div>
+
+    <div class="dash-section-title">🙏 Lord Vishnu & Krishna Collection</div>
+    <div class="dash-grid">
+      <div class="dash-card" data-charm="balaji_classic">
+        <img src="balaji_classic.png" alt="Lord Venkateswara">
+        <div class="dash-card-name">Lord Venkateswara</div>
+        <div class="dash-card-sub">Divine Balaji Darshan</div>
+      </div>
+      <div class="dash-card" data-charm="balaji_modern_1">
+        <img src="balaji_modern_1.png" alt="Modern Balaji Gold">
+        <div class="dash-card-name">Modern Balaji Gold</div>
+        <div class="dash-card-sub">Minimalist Gold Form</div>
+      </div>
+      <div class="dash-card" data-charm="balaji_modern_2">
+        <img src="balaji_modern_2.png" alt="Modern Balaji Aura">
+        <div class="dash-card-name">Modern Balaji Aura</div>
+        <div class="dash-card-sub">Luminous Temple Halo</div>
+      </div>
+      <div class="dash-card" data-charm="balaji_platinum">
+        <img src="balaji_platinum.png" alt="Platinum Balaji">
+        <div class="dash-card-name">Platinum Balaji</div>
+        <div class="dash-card-sub">Silver & Platinum Finish</div>
+      </div>
+      <div class="dash-card" data-charm="krishna_flute">
+        <img src="krishna_flute.png" alt="Venugopala Krishna">
+        <div class="dash-card-name">Venugopala Krishna</div>
+        <div class="dash-card-sub">Divine Flute Melody</div>
+      </div>
+    </div>
+
+    <div class="dash-section-title">🕉️ Divine Deities & Sacred Symbols</div>
+    <div class="dash-grid">
+      <div class="dash-card" data-charm="durga_ma">
+        <img src="durga_ma.png" alt="Durga Ma Shakthi">
+        <div class="dash-card-name">Durga Ma Shakthi</div>
+        <div class="dash-card-sub">Courage, Power & Grace</div>
+      </div>
+      <div class="dash-card" data-charm="hanuman_anjaneyar">
+        <img src="hanuman_anjaneyar.png" alt="Veera Anjaneyar">
+        <div class="dash-card-name">Veera Anjaneyar</div>
+        <div class="dash-card-sub">Strength & Protection</div>
+      </div>
+      <div class="dash-card" data-charm="ayyappa_swamy">
+        <img src="ayyappa_swamy.png" alt="Sabarimala Ayyappa">
+        <div class="dash-card-name">Sabarimala Ayyappa</div>
+        <div class="dash-card-sub">Swamiye Saranam Ayyappa</div>
+      </div>
+      <div class="dash-card" data-charm="vedic_swastik">
+        <img src="vedic_swastik.png" alt="Sacred Vedic Swastik">
+        <div class="dash-card-name">Sacred Vedic Swastik</div>
+        <div class="dash-card-sub">Auspicious Prosperity</div>
+      </div>
+    </div>
+
+    <div class="dash-section-title">✝️ Christian & Jesus Collection</div>
+    <div class="dash-grid">
+      <div class="dash-card" data-charm="christian_holy_cross">
+        <img src="christian_holy_cross.png" alt="Sacred Holy Cross">
+        <div class="dash-card-name">Sacred Holy Cross</div>
+        <div class="dash-card-sub">Faith, Hope & Peace</div>
+      </div>
+      <div class="dash-card" data-charm="christian_siluvai_1">
+        <img src="christian_siluvai_1.png" alt="Golden Siluvai">
+        <div class="dash-card-name">Golden Siluvai</div>
+        <div class="dash-card-sub">Classic Cross Emblem</div>
+      </div>
+      <div class="dash-card" data-charm="christian_siluvai_2">
+        <img src="christian_siluvai_2.png" alt="Ornate Siluvai Cross">
+        <div class="dash-card-name">Ornate Siluvai Cross</div>
+        <div class="dash-card-sub">Artistic Filigree Cross</div>
+      </div>
+      <div class="dash-card" data-charm="christian_cross_3">
+        <img src="christian_cross_3.png" alt="Radiant Cross Pendant">
+        <div class="dash-card-name">Radiant Cross</div>
+        <div class="dash-card-sub">Illuminated Cross Pendant</div>
+      </div>
+      <div class="dash-card" data-charm="christian_yesappa">
+        <img src="christian_yesappa.png" alt="Sacred Heart Yesappa">
+        <div class="dash-card-name">Sacred Heart Yesappa</div>
+        <div class="dash-card-sub">Compassion & Blessing</div>
+      </div>
+    </div>
+
+    <div class="dash-section-title">☪️ Islamic Sacred Collection</div>
+    <div class="dash-grid">
+      <div class="dash-card" data-charm="islam_crescent">
+        <img src="islam_crescent.png" alt="Islamic Crescent & Star">
+        <div class="dash-card-name">Crescent & Star</div>
+        <div class="dash-card-sub">Sacred Islamic Emblem</div>
+      </div>
+      <div class="dash-card" data-charm="islam_mosque">
+        <img src="islam_mosque.png" alt="Golden Dome Mosque">
+        <div class="dash-card-name">Golden Dome Mosque</div>
+        <div class="dash-card-sub">Peace & Serenity</div>
+      </div>
+      <div class="dash-card" data-charm="islam_mosque_1">
+        <img src="islam_mosque_1.png" alt="Masjid Al-Haram Gold">
+        <div class="dash-card-name">Masjid Al-Haram</div>
+        <div class="dash-card-sub">Golden Sanctuary</div>
+      </div>
+      <div class="dash-card" data-charm="islam_calligraphy_medallion">
+        <img src="islam_calligraphy_medallion.png" alt="Allah Sacred Calligraphy">
+        <div class="dash-card-name">Allah Calligraphy</div>
+        <div class="dash-card-sub">Sacred Divine Name</div>
+      </div>
+      <div class="dash-card" data-charm="islam_mosque_minaret">
+        <img src="islam_mosque_minaret.png" alt="Luminous Minaret Mosque">
+        <div class="dash-card-name">Luminous Minaret</div>
+        <div class="dash-card-sub">Tower of Light</div>
+      </div>
+      <div class="dash-card" data-charm="islam_crescent_lantern">
+        <img src="islam_crescent_lantern.png" alt="Golden Crescent & Lantern">
+        <div class="dash-card-name">Crescent & Lantern</div>
+        <div class="dash-card-sub">Ramadan & Eid Glow</div>
+      </div>
+      <div class="dash-card" data-charm="islam_shahada_gold">
+        <img src="islam_shahada_gold.png" alt="Sacred Shahada Shield">
+        <div class="dash-card-name">Sacred Shahada</div>
+        <div class="dash-card-sub">Pillar of Faith</div>
+      </div>
+      <div class="dash-card" data-charm="islam_crescent_floral">
+        <img src="islam_crescent_floral.png" alt="Filigree Crescent Moon">
+        <div class="dash-card-name">Filigree Crescent</div>
+        <div class="dash-card-sub">Arabesque Gold Motif</div>
+      </div>
+    </div>
+
+    <div class="dash-section-title">🦚 Lord Murugan Collection</div>
+    <div class="dash-grid">
+      <div class="dash-card active" data-charm="murugan_vel_pendant">
+        <img src="murugan_vel_pendant.png" alt="Gnana Vel">
+        <div class="dash-card-name">Golden Gnana Vel</div>
+        <div class="dash-card-sub">Courage & Wisdom</div>
+      </div>
+      <div class="dash-card" data-charm="murugan_vel_mayil">
+        <img src="murugan_vel_mayil.png" alt="Mayil & Vel">
+        <div class="dash-card-name">Mayil & Vel</div>
+        <div class="dash-card-sub">Victory & Grace</div>
+      </div>
+      <div class="dash-card" data-charm="murugan_yamirukka">
+        <img src="murugan_yamirukka.png" alt="Yamirukka">
+        <div class="dash-card-name">Yamirukka Bayamen</div>
+        <div class="dash-card-sub">Abhaya Portrait</div>
+      </div>
+      <div class="dash-card" data-charm="murugan_bayamen_badge">
+        <img src="murugan_bayamen_badge.png" alt="Bayamen">
+        <div class="dash-card-name">Bayamen Calligraphy</div>
+        <div class="dash-card-sub">Tamil Typography</div>
+      </div>
+    </div>
+
+    <div class="dash-section-title">🔱 Lord Shiva Collection</div>
+    <div class="dash-grid">
+      <div class="dash-card" data-charm="shiva_gold_nataraj">
+        <img src="shiva_gold_nataraj.png" alt="Nataraja">
+        <div class="dash-card-name">Chidambaram Nataraja</div>
+        <div class="dash-card-sub">Cosmic Dancer</div>
+      </div>
+      <div class="dash-card" data-charm="shiva_shivling">
+        <img src="shiva_shivling.png" alt="Shivling">
+        <div class="dash-card-name">Surya Prabha Shivling</div>
+        <div class="dash-card-sub">Solar Halo Lingam</div>
+      </div>
+      <div class="dash-card" data-charm="shiva_gold_trishul">
+        <img src="shiva_gold_trishul.png" alt="Trishul">
+        <div class="dash-card-name">Gold Trishul & Damru</div>
+        <div class="dash-card-sub">Sacred Om Symbol</div>
+      </div>
+      <div class="dash-card" data-charm="shiva_rudraksham">
+        <img src="shiva_rudraksham.png" alt="Rudraksha">
+        <div class="dash-card-name">Trishul & Rudraksha</div>
+        <div class="dash-card-sub">5-Mukhi Bead</div>
+      </div>
+    </div>
+
+    <div class="dash-section-title">🙏 Shirdi Sai Baba Collection</div>
+    <div class="dash-grid">
+      <div class="dash-card" data-charm="sai_dwarkamai">
+        <img src="sai_1.png" alt="Dwarkamai">
+        <div class="dash-card-name">Dwarkamai Sai</div>
+        <div class="dash-card-sub">Orange Robe Blessing</div>
+      </div>
+      <div class="dash-card" data-charm="sai_samadhi">
+        <img src="sai_2.png" alt="Samadhi Mandir">
+        <div class="dash-card-name">Samadhi Mandir Sai</div>
+        <div class="dash-card-sub">Golden Crown & Shawl</div>
+      </div>
+      <div class="dash-card" data-charm="sai_silver">
+        <img src="sai_3.png" alt="Silver Sai">
+        <div class="dash-card-name">Shirdi Silver Throne</div>
+        <div class="dash-card-sub">Peace & Solace</div>
+      </div>
+    </div>
+
+    <div class="dash-section-title">🔥 Meme & Pop Culture Collection</div>
+    <div class="dash-grid">
+      <div class="dash-card" data-charm="sai_isai">
+        <img src="iSai.png" alt="iSai">
+        <div class="dash-card-name">iSai Baba (Meme)</div>
+        <div class="dash-card-sub">Shraddha & Saburi</div>
+      </div>
+      <div class="dash-card" data-charm="meme_megan_fox">
+        <img src="meme_megan_fox.png" alt="Megan Fox">
+        <div class="dash-card-name">Megan Fox</div>
+        <div class="dash-card-sub">Hollywood Icon</div>
+      </div>
+      <div class="dash-card" data-charm="meme_sydney_sweeney">
+        <img src="meme_sydney_sweeney.png" alt="Sydney Sweeney">
+        <div class="dash-card-name">Sydney Sweeney</div>
+        <div class="dash-card-sub">Pop Sensation</div>
+      </div>
+      <div class="dash-card" data-charm="meme_ajith">
+        <img src="meme_ajith.png" alt="Ajith">
+        <div class="dash-card-name">Thala Ajith</div>
+        <div class="dash-card-sub">Ultimate Star</div>
+      </div>
+      <div class="dash-card" data-charm="meme_vijay">
+        <img src="meme_vijay.png" alt="Vijay">
+        <div class="dash-card-name">Thalapathy Vijay</div>
+        <div class="dash-card-sub">Action Star</div>
+      </div>
+      <div class="dash-card" data-charm="meme_wamiqa">
+        <img src="meme_wamiqa.png" alt="Wamiqa">
+        <div class="dash-card-name">Wamiqa Gabbi</div>
+        <div class="dash-card-sub">Charming Star</div>
+      </div>
+    </div>
+
+    <div class="dash-section-title">🧿 Classic Protection Charms</div>
+    <div class="dash-grid">
+      <div class="dash-card" data-charm="nimbu">
+        <img src="lemon_opt.png" alt="Nimbu">
+        <div class="dash-card-name">Nimbu Mirchi</div>
+        <div class="dash-card-sub">Wards Evil Eye</div>
+      </div>
+      <div class="dash-card" data-charm="nazar">
+        <img src="nazar_opt.png" alt="Nazar">
+        <div class="dash-card-name">Nazar Boncuğu</div>
+        <div class="dash-card-sub">Positive Aura</div>
+      </div>
+      <div class="dash-card" data-charm="daruma">
+        <img src="daruma_opt.png" alt="Daruma">
+        <div class="dash-card-name">Daruma Doll</div>
+        <div class="dash-card-sub">Wishing Charm</div>
+      </div>
+      <div class="dash-card" data-charm="drishti">
+        <img src="drishti.png" alt="Drishti">
+        <div class="dash-card-name">Drishti Bommai</div>
+        <div class="dash-card-sub">Guardian Mask</div>
+      </div>
+    </div>
+
+    <div class="dash-section-title">🐼 Bubu & Dudu Collection</div>
+    <div class="dash-grid">
+      <div class="dash-card" data-charm="bubu_1">
+        <img src="bubu_1.png" alt="Bubu Blushing Heart">
+        <div class="dash-card-name">Bubu Blushing Heart</div>
+        <div class="dash-card-sub">Cute Panda</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_2">
+        <img src="bubu_2.png" alt="Bubu Joyful Wave">
+        <div class="dash-card-name">Bubu Joyful Wave</div>
+        <div class="dash-card-sub">Sweet Greeting</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_3">
+        <img src="bubu_3.png" alt="Bubu Cozy Pillow">
+        <div class="dash-card-name">Bubu Cozy Pillow</div>
+        <div class="dash-card-sub">Cozy Vibes</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_4">
+        <img src="bubu_4.png" alt="Bubu Happy Dance">
+        <div class="dash-card-name">Bubu Happy Dance</div>
+        <div class="dash-card-sub">Playful Panda</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_5">
+        <img src="bubu_5.png" alt="Bubu Warm Winter Hat">
+        <div class="dash-card-name">Bubu Warm Winter Hat</div>
+        <div class="dash-card-sub">Winter Edition</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_6">
+        <img src="bubu_6.png" alt="Bubu Sweet Smile">
+        <div class="dash-card-name">Bubu Sweet Smile</div>
+        <div class="dash-card-sub">Pure Joy</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_7">
+        <img src="bubu_7.png" alt="Bubu Cheerful Hug">
+        <div class="dash-card-name">Bubu Cheerful Hug</div>
+        <div class="dash-card-sub">Warm Hug</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_8">
+        <img src="bubu_8.png" alt="Bubu Sparkle Eyes">
+        <div class="dash-card-name">Bubu Sparkle Eyes</div>
+        <div class="dash-card-sub">Enchanted Gaze</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_9">
+        <img src="bubu_9.png" alt="Bubu Playful Wink">
+        <div class="dash-card-name">Bubu Playful Wink</div>
+        <div class="dash-card-sub">Cheeky Mood</div>
+      </div>
+      <div class="dash-card" data-charm="dudu_1">
+        <img src="dudu_1.png" alt="Dudu Gentle Brown Bear">
+        <div class="dash-card-name">Dudu Gentle Brown Bear</div>
+        <div class="dash-card-sub">Gentle Bear</div>
+      </div>
+      <div class="dash-card" data-charm="dudu_2">
+        <img src="dudu_2.png" alt="Dudu Sleepy Head">
+        <div class="dash-card-name">Dudu Sleepy Head</div>
+        <div class="dash-card-sub">Peaceful Rest</div>
+      </div>
+      <div class="dash-card" data-charm="dudu_3">
+        <img src="dudu_3.png" alt="Dudu Cool Sunglasses">
+        <div class="dash-card-name">Dudu Cool Sunglasses</div>
+        <div class="dash-card-sub">Chill Bear</div>
+      </div>
+      <div class="dash-card" data-charm="dudu_4">
+        <img src="dudu_4.png" alt="Dudu Silly Winking Bear">
+        <div class="dash-card-name">Dudu Silly Winking Bear</div>
+        <div class="dash-card-sub">Happy Chuckle</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_dudu_pair_1">
+        <img src="bubu_dudu_pair_1.png" alt="Bubu & Dudu Sweetheart Hug">
+        <div class="dash-card-name">Bubu & Dudu Sweetheart Hug</div>
+        <div class="dash-card-sub">Love & Cuddle</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_dudu_pair_2">
+        <img src="bubu_dudu_pair_2.png" alt="Bubu & Dudu Cuddle Duo">
+        <div class="dash-card-name">Bubu & Dudu Cuddle Duo</div>
+        <div class="dash-card-sub">Best Friends</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_dudu_pair_3">
+        <img src="bubu_dudu_pair_3.png" alt="Bubu & Dudu Teatime Fun">
+        <div class="dash-card-name">Bubu & Dudu Teatime Fun</div>
+        <div class="dash-card-sub">Sweet Moments</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_dudu_pair_4">
+        <img src="bubu_dudu_pair_4.png" alt="Bubu & Dudu Beach Adventure">
+        <div class="dash-card-name">Bubu & Dudu Beach Adventure</div>
+        <div class="dash-card-sub">Sunny Days</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_dudu_pair_5">
+        <img src="bubu_dudu_pair_5.png" alt="Bubu & Dudu Straw Hat Trip">
+        <div class="dash-card-name">Bubu & Dudu Straw Hat Trip</div>
+        <div class="dash-card-sub">Traveler Duo</div>
+      </div>
+      <div class="dash-card" data-charm="bubu_dudu_pair_6">
+        <img src="bubu_dudu_pair_6.png" alt="Bubu & Dudu Forever Friends">
+        <div class="dash-card-name">Bubu & Dudu Forever Friends</div>
+        <div class="dash-card-sub">Forever Duo</div>
+      </div>
+    </div>
+
+    <div class="dash-actions">
+      <button id="btn-hang-dangle" class="btn-primary">🪔 Hang on Screen</button>
+    </div>
+  </div>
+
+  <!-- Device Registration & Google Auth Link Modal -->
+  <div id="device-sync-modal" class="device-modal-overlay hidden">
+    <div class="device-modal-box">
+      <div class="device-modal-header">
+        <span class="device-modal-logo">🪔</span>
+        <h3>Link Screen to Jinglee Account</h3>
+        <p>Enter the 6-digit PIN from your Web Profile or sign in with Google.</p>
+      </div>
+
+      <div class="device-pin-input-group">
+        <input type="text" id="input-pairing-pin" placeholder="e.g. 749183" maxlength="6" />
+        <button id="btn-submit-pin" class="btn-primary">Link Screen</button>
+      </div>
+
+      <div class="device-modal-divider"><span>OR</span></div>
+
+      <button id="btn-google-device-login" class="btn-google-mobile">
+        <svg viewBox="0 0 24 24" width="18" height="18">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+        </svg>
+        <span>Sign in with Google</span>
+      </button>
+
+      <button id="btn-close-device-modal" class="btn-close-text">Close</button>
+    </div>
+  </div>
+
   <script src="lib/matter.min.js"></script>
   <script src="charm_data.js"></script>
   <script src="charms.js"></script>

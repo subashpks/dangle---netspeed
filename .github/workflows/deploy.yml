@@ -1,0 +1,35 @@
+name: Deploy website
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: jinglee-dangles/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./jinglee-dangles
+        run: npm install --legacy-peer-deps
+
+      - name: Build website
+        working-directory: ./jinglee-dangles
+        run: npm run build
+
+      - name: Deploy to Azure Storage
+        uses: TravisSpomer/deploy-to-azure-storage@v1.5.0
+        with:
+          source-path: jinglee-dangles/dist
+          sas-url: ${{ secrets.DEPLOY_SAS_URL }}

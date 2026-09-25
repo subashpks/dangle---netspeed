@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jinglee - Set-Based, Device-Bound Payment Gateway Platform</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- QRCode.js for dynamic QR rendering -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Razorpay Checkout Script (Live capability) -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+
+  <!-- Main Navigation & Stepper -->
+  <header>
+    <div class="brand" onclick="app.navigateToStep('website')">
+      <div class="brand-logo">
+        <i data-lucide="zap" style="color: #fff; width: 20px; height: 20px;"></i>
+      </div>
+      <div class="brand-name">Jinglee</div>
+    </div>
+
+    <!-- 5-Step Process Stepper -->
+    <div class="flow-stepper">
+      <div class="step-pill active" id="pill-website" onclick="app.navigateToStep('website')">
+        <span class="step-num">1</span> Website
+      </div>
+      <div class="step-pill" id="pill-register" onclick="app.navigateToStep('register')">
+        <span class="step-num">2</span> Register DB
+      </div>
+      <div class="step-pill" id="pill-purchase" onclick="app.navigateToStep('purchase')">
+        <span class="step-num">3</span> Purchase
+      </div>
+      <div class="step-pill" id="pill-device" onclick="app.navigateToStep('device')">
+        <span class="step-num">4</span> Register Device
+      </div>
+      <div class="step-pill" id="pill-enjoy" onclick="app.navigateToStep('enjoy')">
+        <span class="step-num">5</span> Enjoy (POS)
+      </div>
+    </div>
+
+    <div class="header-status">
+      <div class="status-badge" id="global-status-badge">
+        <span class="pulse-dot"></span>
+        <span id="global-status-text">Supabase Live + RZP</span>
+      </div>
+      <button class="btn btn-secondary" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;" id="header-user-btn" onclick="app.toggleUserMenu()">
+        <i data-lucide="user" style="width: 14px; height: 14px;"></i>
+        <span id="header-user-label">Guest</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ====================================================================
+         STEP 1: WEBSITE / LANDING
+         ==================================================================== -->
+    <section id="step-website" class="step-panel active">
+      <div class="hero-section">
+        <div class="hero-pill">
+          <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i>
+          Next-Gen Set & Device Isolated Gateway
+        </div>
+        <h1 class="hero-title">
+          Smart Payment Rails.<br>
+          <span>Bound to Every Device.</span>
+        </h1>
+        <p class="hero-desc">
+          Jinglee unifies Google Auth, Supabase Realtime, and Razorpay into a high-speed, 
+          set-partitioned POS payment network with local-first offline resilience.
+        </p>
+        <div class="hero-cta-group">
+          <button class="btn btn-primary" onclick="app.navigateToStep('register')">
+            Get Started with Google
+            <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+          </button>
+          <button class="btn btn-secondary" onclick="app.navigateToStep('purchase')">
+            View Set Plans & Pricing
+          </button>
+        </div>
+
+        <div class="stack-badges">
+          <div class="stack-badge-item">
+            <i data-lucide="lock" style="color: #3b82f6;"></i> Google Auth (Zero Friction)
+          </div>
+          <div class="stack-badge-item">
+            <i data-lucide="database" style="color: #10b981;"></i> Supabase Postgres + RLS
+          </div>
+          <div class="stack-badge-item">
+            <i data-lucide="credit-card" style="color: #06b6d4;"></i> Razorpay Gateway (UPI/Cards)
+          </div>
+          <div class="stack-badge-item">
+            <i data-lucide="radio" style="color: #8b5cf6;"></i> WebSocket Realtime Sync
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Highlights -->
+      <div class="grid-3">
+        <div class="glass-card feature-card">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="layers" style="color: #3b82f6;"></i>
+          </div>
+          <h3>Set-Based Partitioning</h3>
+          <p>Group counters, pop-ups, and branches into isolated "Sets" with dedicated settlement UPI IDs and daily reconciliation.</p>
+        </div>
+
+        <div class="glass-card feature-card">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="hard-drive" style="color: #10b981;"></i>
+          </div>
+          <h3>Device Local-First DB</h3>
+          <p>Every terminal stores transactions in encrypted local memory. Works continuously even if your store Wi-Fi drops.</p>
+        </div>
+
+        <div class="glass-card feature-card">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(139, 92, 246, 0.15); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="zap" style="color: #8b5cf6;"></i>
+          </div>
+          <h3>Sub-100ms Push Confirmation</h3>
+          <p>When customers scan a Dynamic UPI QR, Supabase Realtime pushes instant payment status to the POS screen.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         STEP 2: REGISTER WITH THE DB (GOOGLE AUTH + SUPABASE)
+         ==================================================================== -->
+    <section id="step-register" class="step-panel">
+      <div class="auth-container glass-card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <div class="hero-pill" style="margin-bottom: 1rem;">Step 2 of 5: DB Provisioning</div>
+          <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Register Your Merchant DB</h2>
+          <p style="color: var(--text-muted);">Connect your Google Account to initialize your dedicated Supabase multi-tenant schema.</p>
+        </div>
+
+        <div id="auth-unauthenticated-state">
+          <button class="google-auth-btn" onclick="app.loginWithGoogle()">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            Sign up with Google Account
+          </button>
+          
+          <div style="text-align: center; margin: 1.5rem 0; color: var(--text-subtle); font-size: 0.85rem;">
+            — OR QUICK TEST ONBOARDING —
+          </div>
+
+          <form onsubmit="event.preventDefault(); app.registerMerchantManual();">
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem;">Business / Store Name</label>
+              <input type="text" id="reg-store-name" value="Jinglee Flagship Store" required 
+                style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: #fff; font-family: inherit;">
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+              <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem;">Merchant Admin Email</label>
+              <input type="email" id="reg-store-email" value="merchant@jinglee.com" required 
+                style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: #fff; font-family: inherit;">
+            </div>
+            <button type="submit" class="btn btn-secondary" style="width: 100%;">
+              Provision DB Record
+            </button>
+          </form>
+        </div>
+
+        <div id="auth-authenticated-state" style="display: none;">
+          <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; margin-bottom: 1.5rem;">
+            <i data-lucide="check-circle-2" style="color: #10b981; width: 36px; height: 36px; margin-bottom: 0.5rem;"></i>
+            <h4 style="color: #fff; font-size: 1.2rem;">Account & DB Schema Initialized</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem;" id="auth-user-meta">Logged in as merchant@jinglee.com</p>
+          </div>
+
+          <div class="db-live-inspector">
+            <div class="db-header">
+              <span><i data-lucide="terminal" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Supabase Postgres RLS State</span>
+              <span style="color: #10b981;">CONNECTED</span>
+            </div>
+            <div id="db-json-output" style="color: #94a3b8; line-height: 1.5;">
+              // Tenant Tables Instantiated:
+              - public.organizations (ID: org_89f3a...)
+              - public.device_sets (Default Set: "Lane 1 Counter")
+              - public.devices (Allowance: Pending Purchase)
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;" onclick="app.navigateToStep('purchase')">
+            Proceed to Purchase Terminal Plan
+            <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         STEP 3: PURCHASE (RAZORPAY PAYMENT GATEWAY)
+         ==================================================================== -->
+    <section id="step-purchase" class="step-panel">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <div class="hero-pill">Step 3 of 5: Purchase License</div>
+        <h2 style="font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem;">Select Your Terminal Set Plan</h2>
+        <p style="color: var(--text-muted);">Instant activation via Razorpay Gateway with UPI, Cards, and NetBanking.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Plan 1 -->
+        <div class="pricing-card">
+          <div class="plan-name">Single Terminal Set</div>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Ideal for boutique stores & solo kiosks.</p>
+          <div class="plan-price">₹1,499 <span>/ one-time</span></div>
+          <ul class="plan-features">
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> 1 Device Pairing License</li>
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> 1 Logical Set Group</li>
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> Dynamic UPI QR Engine</li>
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> Offline Local DB Sync</li>
+          </ul>
+          <button class="btn btn-secondary" onclick="app.openRazorpayModal('Single Terminal Set', 1499, 1)">
+            Purchase via Razorpay
+          </button>
+        </div>
+
+        <!-- Plan 2 (Featured) -->
+        <div class="pricing-card featured">
+          <div style="position: absolute; top: -12px; right: 20px; background: var(--primary-gradient); font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: var(--radius-full);">
+            MOST POPULAR
+          </div>
+          <div class="plan-name">Multi-Lane Cluster</div>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">For supermarkets, cafes & multi-counter retail.</p>
+          <div class="plan-price">₹3,999 <span>/ one-time</span></div>
+          <ul class="plan-features">
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> <strong>Up to 5 Device Licenses</strong></li>
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> Multi-Set Partitioning & Routing</li>
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> Real-Time Supabase WebSocket Push</li>
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> Daily Automated Settlement Reports</li>
+          </ul>
+          <button class="btn btn-primary" onclick="app.openRazorpayModal('Multi-Lane Cluster', 3999, 5)">
+            Purchase with Razorpay
+          </button>
+        </div>
+
+        <!-- Plan 3 -->
+        <div class="pricing-card">
+          <div class="plan-name">Enterprise Mesh</div>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">High-throughput chain stores & stadium POS.</p>
+          <div class="plan-price">₹8,999 <span>/ one-time</span></div>
+          <ul class="plan-features">
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> <strong>Unlimited Device Licenses</strong></li>
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> Multi-Region Ledger Replicas</li>
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> Custom Webhook Routing</li>
+            <li><i data-lucide="check" style="color: #10b981; width: 16px; height: 16px;"></i> 24/7 Priority Gateway Escalation</li>
+          </ul>
+          <button class="btn btn-secondary" onclick="app.openRazorpayModal('Enterprise Mesh', 8999, 99)">
+            Purchase with Razorpay
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         STEP 4: REGISTER DEVICE (PAIRING & LOCAL DB PROVISIONING)
+         ==================================================================== -->
+    <section id="step-device" class="step-panel">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <div class="hero-pill">Step 4 of 5: Device Registration</div>
+        <h2 style="font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem;">Pair & Bind Your Hardware</h2>
+        <p style="color: var(--text-muted);">Cryptographically links the device hardware key to your purchased Set in Supabase.</p>
+      </div>
+
+      <div class="glass-card">
+        <div class="device-pairing-grid">
+          <!-- Left: Simulated Device Screen -->
+          <div class="qr-terminal-box">
+            <span style="font-size: 0.8rem; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 1px;">Terminal Pairing Beacon</span>
+            
+            <div id="pairing-qrcode" style="margin: 1.25rem 0; padding: 12px; background: #fff; border-radius: 12px;"></div>
+            
+            <div class="code-display" id="pairing-code-text">JGL-8492</div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">
+              Scan QR from your Jinglee Mobile App or enter the 6-character shortcode on the right.
+            </p>
+          </div>
+
+          <!-- Right: Merchant Confirmation Form -->
+          <div>
+            <div style="margin-bottom: 1.5rem;">
+              <span class="status-badge" style="display: inline-flex; margin-bottom: 0.5rem;">
+                <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i>
+                <span id="active-license-label">Active License: Multi-Lane Cluster (5 Slots)</span>
+              </span>
+              <h3 style="font-size: 1.5rem; color: #fff; margin-top: 0.5rem;">Device Details</h3>
+            </div>
+
+            <form onsubmit="event.preventDefault(); app.completeDeviceRegistration();">
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem;">Device Name / Identifier</label>
+                <input type="text" id="dev-name" value="Counter 1 - Main Terminal" required
+                  style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: #fff; font-family: inherit;">
+              </div>
+
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem;">Assign to Set</label>
+                <select id="dev-set-select" 
+                  style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm); background: #0f172a; border: 1px solid var(--border-color); color: #fff; font-family: inherit;">
+                  <option value="set_1">Set A: Downtown Store - Main Lane</option>
+                  <option value="set_2">Set B: Pop-up Kiosk - Express</option>
+                </select>
+              </div>
+
+              <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem;">Pairing Code</label>
+                <input type="text" id="dev-pairing-input" value="JGL-8492" required
+                  style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: var(--accent-cyan); font-weight: 700; font-family: 'JetBrains Mono', monospace;">
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i data-lucide="link-2" style="width: 18px; height: 18px;"></i>
+                Complete Cryptographic Handshake
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         STEP 5: ENJOY (ACTIVE POS TERMINAL & REALTIME HUB)
+         ==================================================================== -->
+    <section id="step-enjoy" class="step-panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <div class="hero-pill" style="margin-bottom: 0.5rem; background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3);">
+            <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i> Device Bound & Active
+          </div>
+          <h2 style="font-size: 1.8rem; font-weight: 700;">Jinglee Terminal & Live Telemetry</h2>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+          <button class="btn btn-secondary" onclick="app.simulateIncomingPayment()" style="font-size: 0.85rem;">
+            <i data-lucide="bell-ring" style="width: 16px; height: 16px;"></i>
+            Simulate Customer Payment Push
+          </button>
+        </div>
+      </div>
+
+      <div class="terminal-layout">
+        <!-- Left: Interactive POS Hardware Simulator -->
+        <div class="pos-hardware">
+          <div class="pos-screen">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-subtle); margin-bottom: 0.5rem;">
+              <span id="pos-device-name">Counter 1 - Main Terminal</span>
+              <span style="color: #10b981;">● ONLINE (Set A)</span>
+            </div>
+
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Amount Due</div>
+            <div class="amount-input-display">₹<span id="pos-amount">0</span></div>
+
+            <!-- Dynamic QR Payment View -->
+            <div id="pos-dynamic-qr-container" style="display: none; margin: 1rem 0; padding: 1rem; background: #fff; border-radius: 14px; text-align: center;">
+              <div id="pos-upi-qrcode" style="display: inline-block;"></div>
+              <p style="color: #0f172a; font-size: 0.8rem; font-weight: 700; margin-top: 0.5rem;">
+                Scan with GPay / PhonePe / Paytm
+              </p>
+            </div>
+
+            <!-- Payment Success Animation View -->
+            <div id="pos-success-banner" style="display: none; padding: 1rem; background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 12px; margin: 1rem 0; color: #10b981;">
+              <i data-lucide="check-circle-2" style="width: 32px; height: 32px; margin: 0 auto 0.25rem;"></i>
+              <div style="font-weight: 700; font-size: 1.1rem;">PAYMENT RECEIVED</div>
+              <div style="font-size: 0.8rem; color: #cbd5e1;" id="pos-success-meta">TXN: #RZP-98421</div>
+            </div>
+          </div>
+
+          <!-- Keypad -->
+          <div class="keypad-grid" id="pos-keypad">
+            <button class="key-btn" onclick="app.keypadPress('1')">1</button>
+            <button class="key-btn" onclick="app.keypadPress('2')">2</button>
+            <button class="key-btn" onclick="app.keypadPress('3')">3</button>
+            <button class="key-btn" onclick="app.keypadPress('4')">4</button>
+            <button class="key-btn" onclick="app.keypadPress('5')">5</button>
+            <button class="key-btn" onclick="app.keypadPress('6')">6</button>
+            <button class="key-btn" onclick="app.keypadPress('7')">7</button>
+            <button class="key-btn" onclick="app.keypadPress('8')">8</button>
+            <button class="key-btn" onclick="app.keypadPress('9')">9</button>
+            <button class="key-btn" onclick="app.keypadPress('C')" style="color: #f43f5e;">C</button>
+            <button class="key-btn" onclick="app.keypadPress('0')">0</button>
+            <button class="key-btn" onclick="app.keypadPress('00')">00</button>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-primary" style="flex: 1;" onclick="app.generateDynamicUPI()">
+              <i data-lucide="qr-code" style="width: 18px; height: 18px;"></i>
+              Generate UPI QR
+            </button>
+            <button class="btn btn-secondary" onclick="app.triggerCardTap()">
+              <i data-lucide="wifi" style="width: 18px; height: 18px;"></i>
+              Tap Pay
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Realtime Supabase Ledger & Set Analytics -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <!-- Telemetry Top Bar -->
+          <div class="grid-3" style="margin-top: 0; gap: 1rem;">
+            <div class="glass-card" style="padding: 1.25rem;">
+              <div style="font-size: 0.8rem; color: var(--text-subtle);">TODAY'S VOLUME (SET A)</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #fff;" id="stat-total-volume">₹14,850</div>
+            </div>
+            <div class="glass-card" style="padding: 1.25rem;">
+              <div style="font-size: 0.8rem; color: var(--text-subtle);">TRANSACTIONS</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-cyan);" id="stat-tx-count">18</div>
+            </div>
+            <div class="glass-card" style="padding: 1.25rem;">
+              <div style="font-size: 0.8rem; color: var(--text-subtle);">SYNC STATUS</div>
+              <div style="font-size: 1.1rem; font-weight: 700; color: var(--accent-emerald); display: flex; align-items: center; gap: 0.4rem; margin-top: 0.4rem;">
+                <span class="pulse-dot"></span> 0 Pending Sync
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-Time Transactions Stream -->
+          <div class="glass-card" style="flex-grow: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff;">
+                <i data-lucide="activity" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: #3b82f6;"></i>
+                Live Supabase Transaction Feed
+              </h3>
+              <span style="font-size: 0.8rem; color: var(--accent-emerald);">Realtime WebSocket Active</span>
+            </div>
+
+            <div class="transactions-stream" id="transactions-feed">
+              <!-- Dynamically populated transaction rows -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Razorpay Checkout Modal (Simulated + SDK Bridge) -->
+  <div class="modal-overlay" id="razorpay-modal-overlay">
+    <div class="razorpay-modal">
+      <div class="rzp-header">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <div style="width: 28px; height: 28px; border-radius: 6px; background: #3395ff; display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="shield" style="color: #fff; width: 16px; height: 16px;"></i>
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.95rem; color: #fff;">Razorpay Secure</div>
+            <div style="font-size: 0.75rem; color: #94a3b8;">Jinglee Technologies Pvt Ltd</div>
+          </div>
+        </div>
+        <button onclick="app.closeRazorpayModal()" style="background: none; border: none; color: #94a3b8; cursor: pointer;">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+
+      <div style="padding: 1.5rem;">
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+          <span style="font-size: 0.85rem; color: #94a3b8;" id="modal-plan-name">Multi-Lane Cluster</span>
+          <div style="font-size: 2.2rem; font-weight: 800; color: #fff;" id="modal-plan-amount">₹3,999.00</div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+          <button class="btn btn-secondary" onclick="app.executePaymentMethod('UPI / QR')" style="justify-content: flex-start;">
+            <i data-lucide="qr-code" style="color: #10b981;"></i> Pay via UPI (GPay / PhonePe / Paytm)
+          </button>
+          <button class="btn btn-secondary" onclick="app.executePaymentMethod('Card')" style="justify-content: flex-start;">
+            <i data-lucide="credit-card" style="color: #3b82f6;"></i> Credit / Debit Cards (Instant Auth)
+          </button>
+          <button class="btn btn-secondary" onclick="app.executePaymentMethod('NetBanking')" style="justify-content: flex-start;">
+            <i data-lucide="building" style="color: #f59e0b;"></i> NetBanking (All Major Banks)
+          </button>
+        </div>
+
+        <div style="font-size: 0.75rem; text-align: center; color: #64748b;">
+          🔒 256-bit Encrypted · Razorpay Orders API & HMAC-SHA256 Verified
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

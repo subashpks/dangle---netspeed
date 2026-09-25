@@ -118,18 +118,17 @@ const CHARMS = {
     id: 'nimbu',
     name: 'Nimbu Mirchi',
     culture: 'Indian',
-    radius: 44,
-    initialY: 200,
+    radius: 54,
+    initialY: 195,
     density: 0.016,
-    restitution: 0.45,
-    // Connect cord snugly at the top chilli stalk
-    knotOffset: -56,
-    drawW: 90,
-    drawH: 110,
-    yOffset: 0,
+    restitution: 0.40,
+    knotOffset: -88,
+    drawW: 105,
+    drawH: 155,
+    yOffset: 2,
+    dataUri: typeof CHARM_DATA_URI !== 'undefined' ? CHARM_DATA_URI : 'charm.png',
     lemonUri: typeof LEMON_DATA_URI !== 'undefined' ? LEMON_DATA_URI : 'lemon_opt.png',
     chilliUri: typeof CHILLI_DATA_URI !== 'undefined' ? CHILLI_DATA_URI : 'chilli_opt.png',
-    dataUri: typeof CHARM_DATA_URI !== 'undefined' ? CHARM_DATA_URI : 'charm.png',
     cord: {
       width: 3.2,
       baseColor: '#b08233',
@@ -142,147 +141,134 @@ const CHARMS = {
     },
     reluctance: {
       enabled: true,
-      triggerRadius: 170,         // Standard alert zone (matches Drishti)
-      maxForce: 0.38,             // Standard crisp dodge force (matches Drishti)
-      angularTorque: 0.07,        // Standard reactive tilt (matches Drishti)
-      catchSpeedThreshold: 7.0    // Standard swipe threshold (matches Daruma)
+      triggerRadius: 170,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.2
     },
-    // Dynamic trailing free-fall strings simulation state
     stringsState: [
-      { angle: 0, vel: 0, bowX: 0 }, // Left jute thread
-      { angle: 0, vel: 0, bowX: 0 }  // Right jute thread
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
     ],
     renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
-      // Nimbu Decay calculation: 7-day half life
-      const hungTime = state.nimbuHungTime || Date.now();
-      const elapsedDays = (Date.now() - hungTime) / (1000 * 60 * 60 * 24);
-      const decay = Math.min(1.0, Math.max(0.0, elapsedDays / 7.0)); // 0.0 = fresh, 1.0 = brown
+      const targetH = 155;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (105 / 155);
+      const targetW = targetH * aspect;
+      const topY = -88;
 
-      const lemonImg = extraAssets?.lemon;
-      const chilliImg = extraAssets?.chilli;
+      // 1. Top Sacred Jute Attachment Knot & Loop
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#8f6522';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(0, topY - 1, 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = '#dfba6c';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. High-Performance Authentic Talisman Image Render (Single Pass with Soft Ambient Shadow)
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(20, 15, 5, 0.35)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetY = 4;
+        ctx.drawImage(img, -targetW / 2, topY + 4, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Sacred Jute & Thread End Tassels (Zero-Gravity Flutter)
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -4, attachY: bottomY - 6, dropLen: 42, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#b08233', highlight: '#e2be68', dash: [3, 2], tipColor: '#8f6522', tipRadius: 2.0, width: 2.4, shadowColor: 'rgba(20, 15, 5, 0.25)' },
+        { attachX: 0, attachY: bottomY - 4, dropLen: 48, stiffness: 0.10, damping: 0.88, restAngle: 0.00, base: '#222222', highlight: '#555555', dash: [3, 2], tipColor: '#b08233', tipRadius: 2.2, width: 2.6, shadowColor: 'rgba(10, 10, 10, 0.28)' },
+        { attachX: 4, attachY: bottomY - 6, dropLen: 44, stiffness: 0.12, damping: 0.86, restAngle: 0.06, base: '#b08233', highlight: '#e2be68', dash: [3, 2], tipColor: '#8f6522', tipRadius: 2.0, width: 2.4, shadowColor: 'rgba(20, 15, 5, 0.25)' }
+      ];
+
+      drawZeroGravityStrings(ctx, charm, CHARMS.nimbu.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  vettaiyaadu: {
+    id: 'vettaiyaadu',
+    name: 'Vettaiyaadu Talisman (வேட்டையாடு விளையாடு)',
+    culture: 'Tamil Cinema & Sacred Protection',
+    radius: 60,
+    initialY: 195,
+    density: 0.016,
+    restitution: 0.40,
+    knotOffset: -105,
+    drawW: 130,
+    drawH: 215,
+    yOffset: 2,
+    dataUri: 'vettaiyaadu.png',
+    isMultiNode: true,
+    nodes: [
+      { id: 'padigaram', name: 'Padigaram (Alum Stone)', image: 'padigaram.png', radius: 28, width: 80, height: 60, density: 0.018 },
+      { id: 'chilli', name: 'Pachai Milagai (Chillies)', image: 'chilli_opt.png', radius: 24, width: 126, height: 46, density: 0.014 },
+      { id: 'elumichai', name: 'Elumichai (Lemon)', image: 'lemon_opt.png', radius: 36, width: 84, height: 84, density: 0.020 },
+      { id: 'finger', name: 'The Clue Finger', image: 'finger.png', radius: 26, width: 118, height: 56, density: 0.024 }
+    ],
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.42,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.2
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    cord: {
+      width: 3.2,
+      baseColor: '#b08233',
+      highlightColor: '#e2be68',
+      shadowColor: 'rgba(40, 25, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#8f6522',
+      knotHighlightColor: '#dfba6c',
+      dash: [4, 3]
+    },
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      // Fallback renderer if single body is used
+      const targetH = 215;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (130 / 215);
+      const targetW = targetH * aspect;
+      const topY = -105;
 
       ctx.save();
-      if (decay > 0.05) {
-        // Organic browning / desaturation aging filter
-        ctx.filter = `sepia(${decay * 0.75}) saturate(${1 - decay * 0.6}) brightness(${1 - decay * 0.25})`;
-      }
-
-      // If new high-res lemon & chilli are ready, render authentic tightly-decked talisman
-      if (lemonImg && lemonImg.complete && chilliImg && chilliImg.complete) {
-        // 1. Draw vertical jute thread spine BEHIND the chillies & lemon
-        ctx.save();
-        ctx.strokeStyle = '#b08233';
-        ctx.lineWidth = 2.4;
-        ctx.beginPath();
-        ctx.moveTo(0, -56);
-        ctx.lineTo(0, 52);
-        ctx.stroke();
-
-        ctx.strokeStyle = '#e2be68';
-        ctx.lineWidth = 1.0;
-        ctx.setLineDash([3, 2]);
-        ctx.beginPath();
-        ctx.moveTo(0, -56);
-        ctx.lineTo(0, 52);
-        ctx.stroke();
-        ctx.restore();
-
-        // 2. 3 TIGHTLY DECKED CHILLIES: proportioned to taper into the plump lemon
-        const decks = [
-          { y: -46, w: 62, rot: -0.08, flip: false }, // Tier 1 (top): slender
-          { y: -28, w: 65, rot: 0.06, flip: true }, // Tier 2 (middle): slightly wider
-          { y: -10, w: 63, rot: -0.04, flip: false }  // Tier 3 (bottom): right above lemon
-        ];
-
-        // Soft drop shadow for chillies and lemon
-        ctx.shadowColor = 'rgba(20, 15, 5, 0.38)';
-        ctx.shadowBlur = 5;
-        ctx.shadowOffsetX = 1.5;
-        ctx.shadowOffsetY = 3.5;
-
-        // Draw the 3 decked chillies over the spine
-        decks.forEach(deck => {
-          ctx.save();
-          ctx.translate(0, deck.y);
-          ctx.rotate(deck.rot);
-          if (deck.flip) {
-            ctx.scale(-1, 1);
-          }
-          const h = (deck.w * 163) / 450;
-          ctx.drawImage(chilliImg, -deck.w / 2, -h / 2, deck.w, h);
-          ctx.restore();
-
-          // Organic puncture entry/exit knot hole where jute passes through
-          ctx.save();
-          ctx.shadowColor = 'transparent';
-          ctx.beginPath();
-          ctx.ellipse(0, deck.y, 2.2, 1.4, 0, 0, Math.PI * 2);
-          ctx.fillStyle = '#3e2723';
-          ctx.fill();
-          ctx.beginPath();
-          ctx.ellipse(0, deck.y - 0.5, 1.2, 0.8, 0, 0, Math.PI * 2);
-          ctx.fillStyle = '#8f6522';
-          ctx.fill();
-          ctx.restore();
-        });
-
-        // 3. Draw Plump, well-proportioned Lemon at the base (52x51px)
-        ctx.save();
-        const lemonW = 52;
-        const lemonH = (lemonW * 393) / 400; // ~51px
-        const lemonY = 18;
-        ctx.drawImage(lemonImg, -lemonW / 2, lemonY - lemonH / 2, lemonW, lemonH);
-
-        // Piercing puncture dot on top and bottom of lemon
-        ctx.shadowColor = 'transparent';
-        ctx.beginPath();
-        ctx.ellipse(0, lemonY - lemonH / 2 + 3, 2.4, 1.4, 0, 0, Math.PI * 2);
-        ctx.fillStyle = '#4e342e';
-        ctx.fill();
-        ctx.restore();
-
-        // 4. Authentic Black Charcoal / Vibhuti pebble bead beneath the lemon
-        ctx.save();
-        ctx.shadowColor = 'rgba(10, 10, 10, 0.35)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetY = 2;
-        ctx.beginPath();
-        ctx.ellipse(0, 44, 6, 5.2, 0.1, 0, Math.PI * 2);
-        ctx.fillStyle = '#222222';
-        ctx.fill();
-        // Specular charcoal rough texture sheen
-        ctx.beginPath();
-        ctx.ellipse(-1.5, 42.5, 2.2, 1.6, -0.2, 0, Math.PI * 2);
-        ctx.fillStyle = '#444444';
-        ctx.fill();
-        ctx.restore();
-
-        // 5. Rustic tied coarse jute knot underneath charcoal bead
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(0, 52, 3.8, 0, Math.PI * 2);
-        ctx.fillStyle = '#8f6522';
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(0, 51.5, 1.8, 0, Math.PI * 2);
-        ctx.fillStyle = '#dfba6c';
-        ctx.fill();
-        ctx.restore();
-
-        // 6. Free-Falling Secondary Physics Strings (Twin rustic jute thread ends with zero-gravity flutter)
-        const stringConfigs = [
-          { attachX: -2.5, attachY: 53, dropLen: 38, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#b08233', highlight: '#e2be68', dash: [3, 3], tipColor: '#8f6522', tipRadius: 1.8, width: 2.5, shadowColor: 'rgba(20, 15, 5, 0.25)' }, // Left string
-          { attachX: 2.5, attachY: 53, dropLen: 44, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#b08233', highlight: '#e2be68', dash: [3, 3], tipColor: '#8f6522', tipRadius: 1.8, width: 2.5, shadowColor: 'rgba(20, 15, 5, 0.25)' }  // Right string
-        ];
-
-        drawZeroGravityStrings(ctx, charm, CHARMS.nimbu.stringsState, stringConfigs, mousePos || extraAssets?.mousePos || state?.mousePos);
-
-      } else if (img && img.complete && img.naturalWidth > 0) {
-        // Fallback to legacy single asset while images load
-        ctx.drawImage(img, -CHARMS.nimbu.drawW / 2, -CHARMS.nimbu.drawH / 2 + CHARMS.nimbu.yOffset, CHARMS.nimbu.drawW, CHARMS.nimbu.drawH);
-      }
-
+      ctx.beginPath();
+      ctx.arc(0, topY, 5.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#8f6522';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, topY - 1, 2.4, 0, Math.PI * 2);
+      ctx.fillStyle = '#dfba6c';
+      ctx.fill();
       ctx.restore();
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(20, 15, 5, 0.45)';
+        ctx.shadowBlur = 12;
+        ctx.shadowOffsetY = 6;
+        ctx.drawImage(img, -targetW / 2, topY + 4, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -4, attachY: bottomY - 6, dropLen: 42, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#b08233', highlight: '#e2be68', dash: [3, 2], tipColor: '#8f6522', tipRadius: 2.0, width: 2.4, shadowColor: 'rgba(20, 15, 5, 0.25)' },
+        { attachX: 0, attachY: bottomY - 4, dropLen: 48, stiffness: 0.10, damping: 0.88, restAngle: 0.00, base: '#222222', highlight: '#555555', dash: [3, 2], tipColor: '#b08233', tipRadius: 2.2, width: 2.6, shadowColor: 'rgba(10, 10, 10, 0.28)' },
+        { attachX: 4, attachY: bottomY - 6, dropLen: 44, stiffness: 0.12, damping: 0.86, restAngle: 0.06, base: '#b08233', highlight: '#e2be68', dash: [3, 2], tipColor: '#8f6522', tipRadius: 2.0, width: 2.4, shadowColor: 'rgba(20, 15, 5, 0.25)' }
+      ];
+
+      drawZeroGravityStrings(ctx, charm, CHARMS.vettaiyaadu.stringsState, stringConfigs, mousePos || state?.mousePos);
     }
   },
 
@@ -1180,5 +1166,2894 @@ const CHARMS = {
 
       drawZeroGravityStrings(ctx, charm, CHARMS.hamsa.stringsState, stringConfigs, mousePos || extraAssets?.mousePos || state?.mousePos);
     }
+  },
+
+  murugan_vel_pendant: {
+    id: 'murugan_vel_pendant',
+    name: 'Golden Gnana Vel (ஞான வேல்)',
+    culture: 'Tamil Hindu',
+    radius: 40,
+    initialY: 200,
+    density: 0.019,
+    restitution: 0.42,
+    knotOffset: -82,
+    drawW: 46,
+    drawH: 185,
+    yOffset: 10,
+    dataUri: 'murugan_vel_pendant.png',
+    cord: {
+      width: 3.2,
+      baseColor: '#d48806',
+      highlightColor: '#ffd666',
+      shadowColor: 'rgba(50, 20, 0, 0.42)',
+      hasKnotDot: true,
+      knotBaseColor: '#ad6800',
+      knotHighlightColor: '#ffe58f',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 165,
+      maxForce: 0.36,
+      angularTorque: 0.065,
+      catchSpeedThreshold: 7.2
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      // Compute perfect original aspect ratio
+      const targetH = 185;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (158 / 631);
+      const targetW = targetH * aspect;
+      const topY = -80;
+
+      // 1. Hanging Top Loop Gold Ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.5, 0, Math.PI * 2);
+      ctx.strokeStyle = '#faad14';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+
+      // Top Red Raksha Knot
+      ctx.beginPath();
+      ctx.arc(0, topY, 3.2, 0, Math.PI * 2);
+      ctx.fillStyle = '#cf1322';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Draw Vel Pendant Image with Soft Golden Radiance (True Aspect Ratio)
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(250, 173, 20, 0.38)';
+        ctx.shadowBlur = 12;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Sacred Raksha Threads attached at the bottom tip
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -3, attachY: bottomY, dropLen: 32, stiffness: 0.12, damping: 0.86, restAngle: -0.05, base: '#cf1322', highlight: '#ff7875', dash: [3, 2], tipColor: '#faad14', tipRadius: 2.0, width: 2.2, shadowColor: 'rgba(40, 10, 0, 0.30)' },
+        { attachX: 3, attachY: bottomY, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.05, base: '#d48806', highlight: '#ffe58f', dash: [3, 2], tipColor: '#cf1322', tipRadius: 2.0, width: 2.2, shadowColor: 'rgba(40, 10, 0, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.murugan_vel_pendant.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  murugan_vel_mayil: {
+    id: 'murugan_vel_mayil',
+    name: 'Mayil & Vel (Peacock & Spear)',
+    culture: 'Tamil Hindu',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.44,
+    knotOffset: -82,
+    drawW: 88,
+    drawH: 185,
+    yOffset: 12,
+    dataUri: 'murugan_vel_mayil.png',
+    cord: {
+      width: 3.2,
+      baseColor: '#006d75',
+      highlightColor: '#87e8de',
+      shadowColor: 'rgba(0, 30, 35, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#d48806',
+      knotHighlightColor: '#ffd666',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      // Compute perfect original aspect ratio
+      const targetH = 185;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (299 / 631);
+      const targetW = targetH * aspect;
+      const topY = -80;
+
+      // 1. Top Peacock-Green & Gold Knot
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 5.0, 0, Math.PI * 2);
+      ctx.fillStyle = '#faad14';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#08979c';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Main Vel & Peacock Image (True Aspect Ratio)
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(8, 151, 156, 0.32)';
+        ctx.shadowBlur = 12;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Emerald & Saffron Feather Strings
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 10, dropLen: 38, stiffness: 0.12, damping: 0.85, restAngle: -0.10, base: '#006d75', highlight: '#5cdbd3', dash: [3, 2], tipColor: '#faad14', tipRadius: 2.2, width: 2.2, shadowColor: 'rgba(0, 30, 35, 0.28)' },
+        { attachX: 0, attachY: bottomY, dropLen: 42, stiffness: 0.10, damping: 0.88, restAngle: 0.00, base: '#d48806', highlight: '#ffe58f', dash: [3, 2], tipColor: '#13c2c2', tipRadius: 2.0, width: 2.4, shadowColor: 'rgba(30, 20, 0, 0.28)' },
+        { attachX: 12, attachY: bottomY - 12, dropLen: 36, stiffness: 0.13, damping: 0.86, restAngle: 0.08, base: '#006d75', highlight: '#5cdbd3', dash: [3, 2], tipColor: '#faad14', tipRadius: 2.0, width: 2.2, shadowColor: 'rgba(0, 30, 35, 0.28)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.murugan_vel_mayil.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  murugan_yamirukka: {
+    id: 'murugan_yamirukka',
+    name: 'Yamirukka Bayamen (Portrait)',
+    culture: 'Tamil Hindu',
+    radius: 54,
+    initialY: 200,
+    density: 0.016,
+    restitution: 0.40,
+    knotOffset: -75,
+    drawW: 115,
+    drawH: 153,
+    yOffset: 0,
+    dataUri: 'murugan_yamirukka.png',
+    cord: {
+      width: 3.4,
+      baseColor: '#ad4e00',
+      highlightColor: '#ffbb96',
+      shadowColor: 'rgba(50, 15, 0, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#873800',
+      knotHighlightColor: '#ffd591',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.35,
+      angularTorque: 0.06,
+      catchSpeedThreshold: 7.2
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      // Compute perfect original aspect ratio
+      const targetH = 155;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (457 / 607);
+      const targetW = targetH * aspect;
+      const topY = -75;
+
+      // 1. Sacred Rudraksha Bead Top Anchor
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 5.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#613400';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(-1.5, topY - 1.5, 1.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#d48806';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Portrait Medallion (True Aspect Ratio)
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 197, 61, 0.40)';
+        ctx.shadowBlur = 16;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Saffron Tassel Strings
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -18, attachY: bottomY - 4, dropLen: 30, stiffness: 0.12, damping: 0.86, restAngle: -0.05, base: '#ad4e00', highlight: '#ffd591', dash: [3, 2], tipColor: '#613400', tipRadius: 2.2, width: 2.2, shadowColor: 'rgba(40, 10, 0, 0.25)' },
+        { attachX: 18, attachY: bottomY - 4, dropLen: 30, stiffness: 0.12, damping: 0.86, restAngle: 0.05, base: '#ad4e00', highlight: '#ffd591', dash: [3, 2], tipColor: '#613400', tipRadius: 2.2, width: 2.2, shadowColor: 'rgba(40, 10, 0, 0.25)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.murugan_yamirukka.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  murugan_bayamen_badge: {
+    id: 'murugan_bayamen_badge',
+    name: 'Yamirukka Bayamen (Tamil Calligraphy)',
+    culture: 'Tamil Hindu',
+    radius: 52,
+    initialY: 200,
+    density: 0.017,
+    restitution: 0.42,
+    knotOffset: -65,
+    drawW: 135,
+    drawH: 112,
+    yOffset: 0,
+    dataUri: 'murugan_bayamen_badge.png',
+    cord: {
+      width: 3.2,
+      baseColor: '#820014',
+      highlightColor: '#ff7875',
+      shadowColor: 'rgba(40, 0, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#faad14',
+      knotHighlightColor: '#fff1b8',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 170,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      // Compute perfect original aspect ratio
+      const targetW = 140;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalHeight / img.naturalWidth) : (488 / 589);
+      const targetH = targetW * aspect;
+      const topY = -65;
+
+      // 1. Top Golden Spear Tip Knot
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#faad14';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.4, 0, Math.PI * 2);
+      ctx.fillStyle = '#cf1322';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Calligraphy Badge (True Aspect Ratio)
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(168, 7, 26, 0.35)';
+        ctx.shadowBlur = 14;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Crimson Silk Threads with Brass Caps
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -16, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#820014', highlight: '#ff7875', dash: [3, 2], tipColor: '#faad14', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 0, 10, 0.30)' },
+        { attachX: 16, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#820014', highlight: '#ff7875', dash: [3, 2], tipColor: '#faad14', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 0, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.murugan_bayamen_badge.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  shiva_gold_nataraj: {
+    id: 'shiva_gold_nataraj',
+    name: 'Chidambaram Nataraja (Cosmic Dancer)',
+    culture: 'Tamil Shaiva',
+    radius: 46,
+    initialY: 200,
+    density: 0.0155,
+    restitution: 0.46,
+    knotOffset: -75,
+    drawW: 125,
+    drawH: 166,
+    yOffset: 0,
+    dataUri: 'shiva_gold_nataraj.png',
+    cord: {
+      width: 3.4,
+      baseColor: '#0b1d3a',
+      highlightColor: '#d4af37',
+      shadowColor: 'rgba(5, 10, 25, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#d4af37',
+      knotHighlightColor: '#fff1b8',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.40,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 166;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (339 / 451);
+      const targetW = targetH * aspect;
+      const topY = -75;
+
+      // 1. Top Hanging Loop Ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.6, 0, Math.PI * 2);
+      ctx.fillStyle = '#0b1d3a';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Nataraja Image
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(212, 175, 55, 0.38)';
+        ctx.shadowBlur = 14;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Cosmic Navy & Gold Strings
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#0b1d3a', highlight: '#d4af37', dash: [3, 2], tipColor: '#d4af37', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(5, 10, 25, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#0b1d3a', highlight: '#d4af37', dash: [3, 2], tipColor: '#d4af37', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(5, 10, 25, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.shiva_gold_nataraj.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  shiva_shivling: {
+    id: 'shiva_shivling',
+    name: 'Surya Prabha Shivling (சூரிய பிரபை)',
+    culture: 'Tamil Shaiva',
+    radius: 44,
+    initialY: 200,
+    density: 0.0145,
+    restitution: 0.48,
+    knotOffset: -75,
+    drawW: 122,
+    drawH: 165,
+    yOffset: 0,
+    dataUri: 'shiva_shivling.png',
+    cord: {
+      width: 3.2,
+      baseColor: '#d48806',
+      highlightColor: '#ffe58f',
+      shadowColor: 'rgba(40, 20, 0, 0.42)',
+      hasKnotDot: true,
+      knotBaseColor: '#ad6800',
+      knotHighlightColor: '#ffd666',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.40,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 165;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (292 / 397);
+      const targetW = targetH * aspect;
+      const topY = -75;
+
+      // 1. Top Loop
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.strokeStyle = '#faad14';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Shivling Image
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(250, 173, 20, 0.38)';
+        ctx.shadowBlur = 14;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Sacred Holy Ash & Saffron Threads
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -12, attachY: bottomY - 8, dropLen: 32, stiffness: 0.12, damping: 0.86, restAngle: -0.05, base: '#d48806', highlight: '#ffe58f', dash: [3, 2], tipColor: '#faad14', tipRadius: 2.2, width: 2.2, shadowColor: 'rgba(40, 20, 0, 0.28)' },
+        { attachX: 12, attachY: bottomY - 8, dropLen: 32, stiffness: 0.12, damping: 0.86, restAngle: 0.05, base: '#d48806', highlight: '#ffe58f', dash: [3, 2], tipColor: '#faad14', tipRadius: 2.2, width: 2.2, shadowColor: 'rgba(40, 20, 0, 0.28)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.shiva_shivling.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  shiva_gold_trishul: {
+    id: 'shiva_gold_trishul',
+    name: 'Gold Trishul & Damru (திரிசூலம்)',
+    culture: 'Tamil Shaiva',
+    radius: 42,
+    initialY: 200,
+    density: 0.0150,
+    restitution: 0.46,
+    knotOffset: -80,
+    drawW: 90,
+    drawH: 170,
+    yOffset: 6,
+    dataUri: 'shiva_gold_trishul.png',
+    cord: {
+      width: 3.4,
+      baseColor: '#faad14',
+      highlightColor: '#fff1b8',
+      shadowColor: 'rgba(50, 20, 0, 0.42)',
+      hasKnotDot: true,
+      knotBaseColor: '#ad6800',
+      knotHighlightColor: '#ffd666',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.42,
+      angularTorque: 0.080,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 170;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (277 / 522);
+      const targetW = targetH * aspect;
+      const topY = -80;
+
+      // 1. Top Loop
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.5, 0, Math.PI * 2);
+      ctx.strokeStyle = '#faad14';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Gold Trishul Image
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(250, 173, 20, 0.40)';
+        ctx.shadowBlur = 14;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Crimson & Gold Tassels
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -4, attachY: bottomY, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#cf1322', highlight: '#ff7875', dash: [3, 2], tipColor: '#faad14', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 10, 0, 0.30)' },
+        { attachX: 4, attachY: bottomY, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#faad14', highlight: '#fff1b8', dash: [3, 2], tipColor: '#cf1322', tipRadius: 2.0, width: 2.4, shadowColor: 'rgba(40, 10, 0, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.shiva_gold_trishul.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  shiva_rudraksham: {
+    id: 'shiva_rudraksham',
+    name: 'Trishul & 5-Mukhi Rudraksha (ருத்ராட்சம்)',
+    culture: 'Tamil Shaiva',
+    radius: 38,
+    initialY: 200,
+    density: 0.0150,
+    restitution: 0.46,
+    knotOffset: -82,
+    drawW: 52,
+    drawH: 180,
+    yOffset: 8,
+    dataUri: 'shiva_rudraksham.png',
+    cord: {
+      width: 3.2,
+      baseColor: '#ad4e00',
+      highlightColor: '#ffbb96',
+      shadowColor: 'rgba(50, 15, 0, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#613400',
+      knotHighlightColor: '#ffd591',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 170,
+      maxForce: 0.40,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 180;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (183 / 633);
+      const targetW = targetH * aspect;
+      const topY = -80;
+
+      // 1. Top Loop with Rudraksha bead
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.5, 0, Math.PI * 2);
+      ctx.strokeStyle = '#faad14';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#613400';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Rudraksham Pendant Image
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(212, 136, 6, 0.38)';
+        ctx.shadowBlur = 14;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Saffron Tassels
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -3, attachY: bottomY, dropLen: 30, stiffness: 0.12, damping: 0.86, restAngle: -0.05, base: '#ad4e00', highlight: '#ffd591', dash: [3, 2], tipColor: '#613400', tipRadius: 2.2, width: 2.2, shadowColor: 'rgba(40, 10, 0, 0.25)' },
+        { attachX: 3, attachY: bottomY, dropLen: 30, stiffness: 0.12, damping: 0.86, restAngle: 0.05, base: '#ad4e00', highlight: '#ffd591', dash: [3, 2], tipColor: '#613400', tipRadius: 2.2, width: 2.2, shadowColor: 'rgba(40, 10, 0, 0.25)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.shiva_rudraksham.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  sai_isai: {
+    id: 'sai_isai',
+    name: 'iSai (iSai Baba Meme Charm)',
+    culture: 'Meme & Pop Culture',
+    radius: 52,
+    initialY: 200,
+    density: 0.016,
+    restitution: 0.42,
+    knotOffset: -80,
+    drawW: 135,
+    drawH: 145,
+    yOffset: 0,
+    dataUri: 'iSai.png',
+    cord: {
+      width: 3.4,
+      baseColor: '#c0392b',
+      highlightColor: '#f1c40f',
+      shadowColor: 'rgba(50, 10, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#e74c3c',
+      knotHighlightColor: '#f39c12',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.2
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 145;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (451 / 486);
+      const targetW = targetH * aspect;
+      const topY = -80;
+
+      // 1. Top Knot & Loop
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#f1c40f';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, topY - 1, 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = '#c0392b';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. iSai Medallion with Warm Radiant Glow
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(231, 76, 60, 0.38)';
+        ctx.shadowBlur = 14;
+        ctx.shadowOffsetY = 3;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Vermilion & Saffron Silk Tassels
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 36, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#c0392b', highlight: '#f39c12', dash: [3, 2], tipColor: '#f1c40f', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(50, 10, 10, 0.28)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 36, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#f39c12', highlight: '#f1c40f', dash: [3, 2], tipColor: '#c0392b', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(50, 10, 10, 0.28)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.sai_isai.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  sai_dwarkamai: {
+    id: 'sai_dwarkamai',
+    name: 'Dwarkamai Sai (Shraddha & Saburi)',
+    culture: 'Shirdi Devotional',
+    radius: 50,
+    initialY: 200,
+    density: 0.016,
+    restitution: 0.42,
+    knotOffset: -78,
+    drawW: 130,
+    drawH: 152,
+    yOffset: 0,
+    dataUri: 'sai_1.png',
+    cord: {
+      width: 3.4,
+      baseColor: '#d48806',
+      highlightColor: '#ffe58f',
+      shadowColor: 'rgba(50, 30, 0, 0.42)',
+      hasKnotDot: true,
+      knotBaseColor: '#ad6800',
+      knotHighlightColor: '#ffd666',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.2
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 152;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (438 / 509);
+      const targetW = targetH * aspect;
+      const topY = -78;
+
+      // 1. Top Sacred Golden Ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.strokeStyle = '#faad14';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Dwarkamai Sai Portrait
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(250, 173, 20, 0.40)';
+        ctx.shadowBlur = 14;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Sacred Golden Temple Tassels
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -12, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.05, base: '#d48806', highlight: '#ffe58f', dash: [3, 2], tipColor: '#faad14', tipRadius: 2.2, width: 2.2, shadowColor: 'rgba(40, 20, 0, 0.28)' },
+        { attachX: 12, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: 0.05, base: '#d48806', highlight: '#ffe58f', dash: [3, 2], tipColor: '#faad14', tipRadius: 2.2, width: 2.2, shadowColor: 'rgba(40, 20, 0, 0.28)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.sai_dwarkamai.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  sai_samadhi: {
+    id: 'sai_samadhi',
+    name: 'Shirdi Sai (Orange Headdress)',
+    culture: 'Shirdi Devotional',
+    radius: 52,
+    initialY: 200,
+    density: 0.016,
+    restitution: 0.42,
+    knotOffset: -80,
+    drawW: 135,
+    drawH: 135,
+    yOffset: 0,
+    dataUri: 'sai_2.png',
+    cord: {
+      width: 3.4,
+      baseColor: '#d35400',
+      highlightColor: '#f39c12',
+      shadowColor: 'rgba(45, 15, 0, 0.42)',
+      hasKnotDot: true,
+      knotBaseColor: '#ad4e00',
+      knotHighlightColor: '#ffd591',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.2
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 138;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (475 / 466);
+      const targetW = targetH * aspect;
+      const topY = -80;
+
+      // 1. Top Sacred Ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#d35400';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.4, 0, Math.PI * 2);
+      ctx.fillStyle = '#f39c12';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Shirdi Sai Image
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(211, 84, 0, 0.38)';
+        ctx.shadowBlur = 14;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Saffron Tassels
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#d35400', highlight: '#f39c12', dash: [3, 2], tipColor: '#faad14', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 10, 0, 0.28)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#ad4e00', highlight: '#ffd591', dash: [3, 2], tipColor: '#d35400', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 10, 0, 0.28)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.sai_samadhi.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  sai_silver: {
+    id: 'sai_silver',
+    name: 'Sai Avadhoota (White Robes)',
+    culture: 'Shirdi Devotional',
+    radius: 48,
+    initialY: 200,
+    density: 0.016,
+    restitution: 0.42,
+    knotOffset: -82,
+    drawW: 120,
+    drawH: 158,
+    yOffset: 0,
+    dataUri: 'sai_3.png',
+    cord: {
+      width: 3.2,
+      baseColor: '#7f8c8d',
+      highlightColor: '#ecf0f1',
+      shadowColor: 'rgba(20, 25, 30, 0.42)',
+      hasKnotDot: true,
+      knotBaseColor: '#2c3e50',
+      knotHighlightColor: '#bdc3c7',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.2
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 158;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (416 / 546);
+      const targetW = targetH * aspect;
+      const topY = -82;
+
+      // 1. Top Sacred Silver/Gold Ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.strokeStyle = '#bdc3c7';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. White-Robed Sai Image
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(236, 240, 241, 0.45)';
+        ctx.shadowBlur = 14;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      // 3. Trailing Silver & Pearl White Cords
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -12, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.05, base: '#7f8c8d', highlight: '#ecf0f1', dash: [3, 2], tipColor: '#bdc3c7', tipRadius: 2.2, width: 2.2, shadowColor: 'rgba(20, 25, 30, 0.25)' },
+        { attachX: 12, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: 0.05, base: '#7f8c8d', highlight: '#ecf0f1', dash: [3, 2], tipColor: '#bdc3c7', tipRadius: 2.2, width: 2.2, shadowColor: 'rgba(20, 25, 30, 0.25)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.sai_silver.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  meme_megan_fox: {
+    id: 'meme_megan_fox',
+    name: 'Megan Fox',
+    culture: 'Meme & Pop Culture',
+    radius: 50,
+    initialY: 200,
+    density: 0.016,
+    restitution: 0.42,
+    knotOffset: -80,
+    drawW: 120,
+    drawH: 155,
+    yOffset: 0,
+    dataUri: 'meme_megan_fox.png',
+    cord: {
+      width: 3.2,
+      baseColor: '#d63031',
+      highlightColor: '#ff7675',
+      shadowColor: 'rgba(50, 10, 20, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#e84393',
+      knotHighlightColor: '#fd79a8',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.2
+    },
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 155;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (399 / 575);
+      const targetW = targetH * aspect;
+      const topY = -80;
+
+      // 1. Top Ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.6, 0, Math.PI * 2);
+      ctx.fillStyle = '#e84393';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = '#fd79a8';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Image with subtle radiant glow
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(232, 67, 147, 0.35)';
+        ctx.shadowBlur = 12;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+    }
+  },
+
+  meme_sydney_sweeney: {
+    id: 'meme_sydney_sweeney',
+    name: 'Sydney Sweeney',
+    culture: 'Meme & Pop Culture',
+    radius: 48,
+    initialY: 200,
+    density: 0.016,
+    restitution: 0.42,
+    knotOffset: -78,
+    drawW: 125,
+    drawH: 142,
+    yOffset: 0,
+    dataUri: 'meme_sydney_sweeney.png',
+    cord: {
+      width: 3.2,
+      baseColor: '#6c5ce7',
+      highlightColor: '#a29bfe',
+      shadowColor: 'rgba(30, 20, 60, 0.42)',
+      hasKnotDot: true,
+      knotBaseColor: '#fd79a8',
+      knotHighlightColor: '#ffeaa7',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.2
+    },
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 142;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (252 / 336);
+      const targetW = targetH * aspect;
+      const topY = -78;
+
+      // 1. Top Ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.6, 0, Math.PI * 2);
+      ctx.fillStyle = '#fd79a8';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffeaa7';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Image
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(108, 92, 231, 0.35)';
+        ctx.shadowBlur = 12;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+    }
+  },
+
+  meme_ajith: {
+    id: 'meme_ajith',
+    name: 'Thala Ajith',
+    culture: 'Meme & Pop Culture',
+    radius: 50,
+    initialY: 200,
+    density: 0.016,
+    restitution: 0.42,
+    knotOffset: -78,
+    drawW: 145,
+    drawH: 130,
+    yOffset: 0,
+    dataUri: 'meme_ajith.png',
+    cord: {
+      width: 3.4,
+      baseColor: '#2d3436',
+      highlightColor: '#dfe6e9',
+      shadowColor: 'rgba(20, 20, 20, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#636e72',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.2
+    },
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 130;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (345 / 275);
+      const targetW = targetH * aspect;
+      const topY = -78;
+
+      // 1. Top Racing Metallic Ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#636e72';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.4, 0, Math.PI * 2);
+      ctx.fillStyle = '#dfe6e9';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Image
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(45, 52, 54, 0.4)';
+        ctx.shadowBlur = 12;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+    }
+  },
+
+  meme_vijay: {
+    id: 'meme_vijay',
+    name: 'Thalapathy Vijay (Action)',
+    culture: 'Meme & Pop Culture',
+    radius: 50,
+    initialY: 200,
+    density: 0.016,
+    restitution: 0.42,
+    knotOffset: -78,
+    drawW: 135,
+    drawH: 132,
+    yOffset: 0,
+    dataUri: 'meme_vijay.png',
+    cord: {
+      width: 3.4,
+      baseColor: '#d63031',
+      highlightColor: '#f1c40f',
+      shadowColor: 'rgba(60, 10, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#c0392b',
+      knotHighlightColor: '#e67e22',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.2
+    },
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 132;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (272 / 264);
+      const targetW = targetH * aspect;
+      const topY = -78;
+
+      // 1. Top Fire Ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#d63031';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.4, 0, Math.PI * 2);
+      ctx.fillStyle = '#f1c40f';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Image
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(214, 48, 49, 0.4)';
+        ctx.shadowBlur = 14;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+    }
+  },
+
+  meme_wamiqa: {
+    id: 'meme_wamiqa',
+    name: 'Wamiqa Gabbi',
+    culture: 'Meme & Pop Culture',
+    radius: 48,
+    initialY: 200,
+    density: 0.016,
+    restitution: 0.42,
+    knotOffset: -78,
+    drawW: 130,
+    drawH: 135,
+    yOffset: 0,
+    dataUri: 'meme_wamiqa.png',
+    cord: {
+      width: 3.2,
+      baseColor: '#00b894',
+      highlightColor: '#ffeaa7',
+      shadowColor: 'rgba(10, 40, 30, 0.42)',
+      hasKnotDot: true,
+      knotBaseColor: '#00cec9',
+      knotHighlightColor: '#55efc4',
+      dash: [4, 2]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.38,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.2
+    },
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 135;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (244 / 265);
+      const targetW = targetH * aspect;
+      const topY = -78;
+
+      // 1. Top Emerald Ring
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.6, 0, Math.PI * 2);
+      ctx.fillStyle = '#00b894';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = '#55efc4';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Image
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 184, 148, 0.38)';
+        ctx.shadowBlur = 12;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+    }
+  },
+
+  balaji_classic: {
+    id: 'balaji_classic',
+    name: 'Lord Venkateswara (ஏழுமலையான் பாலாஜி)',
+    culture: 'Tamil Vaishnava',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 105,
+    drawH: 194,
+    yOffset: 0,
+    dataUri: 'balaji_classic.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#b71540',
+      highlightColor: '#f6b93b',
+      shadowColor: 'rgba(40, 10, 20, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#f6b93b',
+      knotHighlightColor: '#ffd700',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.37,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 194;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (198 / 360);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 2.4;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#b71540';
+      ctx.fill();
+      ctx.restore();
+
+      ctx.save();
+      const grad = ctx.createRadialGradient(0, topY + targetH * 0.45, 15, 0, topY + targetH * 0.45, targetW * 0.75);
+      grad.addColorStop(0, 'rgba(255, 215, 0, 0.38)');
+      grad.addColorStop(0.5, 'rgba(243, 156, 18, 0.16)');
+      grad.addColorStop(1, 'rgba(255, 215, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, topY + targetH * 0.45, targetW * 0.75, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.42)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#b71540', highlight: '#f6b93b', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 10, 20, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#b71540', highlight: '#f6b93b', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 10, 20, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.balaji_classic.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  balaji_modern_1: {
+    id: 'balaji_modern_1',
+    name: 'Modern Balaji Gold (நவீன பாலாஜி 1)',
+    culture: 'Tamil Vaishnava',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 100,
+    drawH: 195,
+    yOffset: 0,
+    dataUri: 'balaji_modern_1.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#e58e26',
+      highlightColor: '#ffd32a',
+      shadowColor: 'rgba(50, 20, 0, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#ffd32a',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.37,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 195;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (189 / 444);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(0, topY, 4.8, 0, Math.PI * 2);
+      ctx.strokeStyle = '#ffd32a';
+      ctx.lineWidth = 2.4;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, topY, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#e58e26';
+      ctx.fill();
+      ctx.restore();
+
+      ctx.save();
+      const grad = ctx.createRadialGradient(0, topY + targetH * 0.45, 15, 0, topY + targetH * 0.45, targetW * 0.8);
+      grad.addColorStop(0, 'rgba(255, 215, 0, 0.35)');
+      grad.addColorStop(1, 'rgba(255, 215, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, topY + targetH * 0.45, targetW * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.45)';
+        ctx.shadowBlur = 16;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -12, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#e58e26', highlight: '#ffd32a', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(50, 20, 0, 0.30)' },
+        { attachX: 12, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#e58e26', highlight: '#ffd32a', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(50, 20, 0, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.balaji_modern_1.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  balaji_modern_2: {
+    id: 'balaji_modern_2',
+    name: 'Modern Balaji Aura (நவீன பாலாஜி 2)',
+    culture: 'Tamil Vaishnava',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 105,
+    drawH: 194,
+    yOffset: 0,
+    dataUri: 'balaji_modern_2.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#b71540',
+      highlightColor: '#f6b93b',
+      shadowColor: 'rgba(40, 10, 20, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#f6b93b',
+      knotHighlightColor: '#ffd700',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 194;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (188 / 393);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.42)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#b71540', highlight: '#f6b93b', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 10, 20, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#b71540', highlight: '#f6b93b', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 10, 20, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.balaji_modern_2.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  balaji_platinum: {
+    id: 'balaji_platinum',
+    name: 'Platinum Balaji (பிளாட்டினம் பாலாஜி)',
+    culture: 'Tamil Vaishnava',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 110,
+    drawH: 190,
+    yOffset: 0,
+    dataUri: 'balaji_platinum.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#718093',
+      highlightColor: '#dcdde1',
+      shadowColor: 'rgba(30, 40, 50, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#dcdde1',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.37,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 190;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (236 / 373);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(220, 221, 225, 0.55)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#718093', highlight: '#f5f6fa', dash: [3, 2], tipColor: '#ffffff', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(20, 30, 40, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#718093', highlight: '#f5f6fa', dash: [3, 2], tipColor: '#ffffff', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(20, 30, 40, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.balaji_platinum.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  krishna_flute: {
+    id: 'krishna_flute',
+    name: 'Venugopala Krishna (புல்லாங்குழல் கிருஷ்ணர்)',
+    culture: 'Vedic Devotional',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 100,
+    drawH: 196,
+    yOffset: 0,
+    dataUri: 'krishna_flute.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#0984e3',
+      highlightColor: '#ffeaa7',
+      shadowColor: 'rgba(0, 30, 60, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#ffeaa7',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.39,
+      angularTorque: 0.085,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 196;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (198 / 491);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(9, 132, 227, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#0984e3', highlight: '#ffeaa7', dash: [3, 2], tipColor: '#ffeaa7', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 30, 60, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#0984e3', highlight: '#ffeaa7', dash: [3, 2], tipColor: '#ffeaa7', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 30, 60, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.krishna_flute.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  durga_ma: {
+    id: 'durga_ma',
+    name: 'Durga Ma Shakthi (வீர துர்க்கை அம்மன்)',
+    culture: 'Shakthi Devotional',
+    radius: 48,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 130,
+    drawH: 192,
+    yOffset: 0,
+    dataUri: 'durga_ma.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#d63031',
+      highlightColor: '#fdcb6e',
+      shadowColor: 'rgba(60, 10, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#fdcb6e',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 190,
+      maxForce: 0.40,
+      angularTorque: 0.085,
+      catchSpeedThreshold: 7.2
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 192;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (299 / 440);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(214, 48, 49, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -16, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#d63031', highlight: '#fdcb6e', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(60, 10, 10, 0.30)' },
+        { attachX: 16, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#d63031', highlight: '#fdcb6e', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(60, 10, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.durga_ma.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  hanuman_anjaneyar: {
+    id: 'hanuman_anjaneyar',
+    name: 'Veera Anjaneyar (வீர ஆஞ்சநேயர்)',
+    culture: 'Hindu Devotional',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 98,
+    drawH: 196,
+    yOffset: 0,
+    dataUri: 'hanuman_anjaneyar.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#e67e22',
+      highlightColor: '#f1c40f',
+      shadowColor: 'rgba(50, 20, 0, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#f1c40f',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.41,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.2
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 196;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (193 / 486);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(230, 126, 34, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#e67e22', highlight: '#f1c40f', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(50, 20, 0, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#e67e22', highlight: '#f1c40f', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(50, 20, 0, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.hanuman_anjaneyar.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  ayyappa_swamy: {
+    id: 'ayyappa_swamy',
+    name: 'Sabarimala Ayyappa (சுவாமியே சரணம் ஐயப்பா)',
+    culture: 'Tamil & Kerala Devotional',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 105,
+    drawH: 190,
+    yOffset: 0,
+    dataUri: 'ayyappa_swamy.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#2d3436',
+      highlightColor: '#e17055',
+      shadowColor: 'rgba(10, 10, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#e17055',
+      knotHighlightColor: '#ffeaa7',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 190;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (191 / 342);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.42)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#2d3436', highlight: '#e17055', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(10, 10, 10, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#2d3436', highlight: '#e17055', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(10, 10, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.ayyappa_swamy.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  vedic_swastik: {
+    id: 'vedic_swastik',
+    name: 'Sacred Vedic Swastik (மங்கள சுவஸ்திக்)',
+    culture: 'Vedic Sacred',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 115,
+    drawH: 194,
+    yOffset: 0,
+    dataUri: 'vedic_swastik.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#c0392b',
+      highlightColor: '#f39c12',
+      shadowColor: 'rgba(50, 10, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#f39c12',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 194;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (270 / 456);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(243, 156, 18, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#c0392b', highlight: '#f39c12', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(50, 10, 10, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#c0392b', highlight: '#f39c12', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(50, 10, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.vedic_swastik.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  christian_holy_cross: {
+    id: 'christian_holy_cross',
+    name: 'Sacred Holy Cross (புனித சிலுவை)',
+    culture: 'Christian',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 105,
+    drawH: 194,
+    yOffset: 0,
+    dataUri: 'christian_holy_cross.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#b8860b',
+      highlightColor: '#fdf5e6',
+      shadowColor: 'rgba(40, 30, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#fdf5e6',
+      knotHighlightColor: '#ffd700',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 194;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (185 / 342);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#b8860b', highlight: '#fdf5e6', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 30, 10, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#b8860b', highlight: '#fdf5e6', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 30, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.christian_holy_cross.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  christian_siluvai_1: {
+    id: 'christian_siluvai_1',
+    name: 'Golden Siluvai (பொன் சிலுவை)',
+    culture: 'Christian Tamil',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 95,
+    drawH: 196,
+    yOffset: 0,
+    dataUri: 'christian_siluvai_1.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#d4af37',
+      highlightColor: '#ffffff',
+      shadowColor: 'rgba(40, 30, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#d4af37',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 196;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (210 / 432);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(212, 175, 55, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#d4af37', highlight: '#ffffff', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 30, 10, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#d4af37', highlight: '#ffffff', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 30, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.christian_siluvai_1.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  christian_siluvai_2: {
+    id: 'christian_siluvai_2',
+    name: 'Ornate Siluvai Cross (அலங்கார சிலுவை)',
+    culture: 'Christian Tamil',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 92,
+    drawH: 198,
+    yOffset: 0,
+    dataUri: 'christian_siluvai_2.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#2c3e50',
+      highlightColor: '#f1c40f',
+      shadowColor: 'rgba(10, 20, 30, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#f1c40f',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 198;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (192 / 414);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(241, 196, 15, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#2c3e50', highlight: '#f1c40f', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(10, 20, 30, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#2c3e50', highlight: '#f1c40f', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(10, 20, 30, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.christian_siluvai_2.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  christian_cross_3: {
+    id: 'christian_cross_3',
+    name: 'Radiant Cross Pendant (ஒளிரும் சிலுவை)',
+    culture: 'Christian',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 104,
+    drawH: 200,
+    yOffset: 0,
+    dataUri: 'christian_cross_3.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#c0392b',
+      highlightColor: '#ffffff',
+      shadowColor: 'rgba(40, 10, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#ffffff',
+      knotHighlightColor: '#ffd700',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.39,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 200;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (216 / 414);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.55)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#c0392b', highlight: '#ffffff', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 10, 10, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#c0392b', highlight: '#ffffff', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 10, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.christian_cross_3.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  christian_yesappa: {
+    id: 'christian_yesappa',
+    name: 'Sacred Heart Yesappa (இயேசு கிறிஸ்து)',
+    culture: 'Christian Tamil',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 90,
+    drawH: 196,
+    yOffset: 0,
+    dataUri: 'christian_yesappa.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#8e44ad',
+      highlightColor: '#f1c40f',
+      shadowColor: 'rgba(30, 10, 40, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#f1c40f',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 196;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (180 / 393);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(241, 196, 15, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#8e44ad', highlight: '#f1c40f', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(30, 10, 40, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#8e44ad', highlight: '#f1c40f', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(30, 10, 40, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.christian_yesappa.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  islam_crescent: {
+    id: 'islam_crescent',
+    name: 'Islamic Crescent & Star (பிறை நிலவு & நட்சத்திரம்)',
+    culture: 'Islamic Sacred',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 122,
+    drawH: 196,
+    yOffset: 0,
+    dataUri: 'islam_crescent.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#009432',
+      highlightColor: '#ffd700',
+      shadowColor: 'rgba(0, 40, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#ffd700',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.39,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 196;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (234 / 375);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 148, 50, 0.50)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#009432', highlight: '#ffd700', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#009432', highlight: '#ffd700', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.islam_crescent.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  islam_mosque: {
+    id: 'islam_mosque',
+    name: 'Golden Dome Mosque (புனித மசூதி)',
+    culture: 'Islamic Sacred',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 120,
+    drawH: 194,
+    yOffset: 0,
+    dataUri: 'islam_mosque.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#009432',
+      highlightColor: '#f5f6fa',
+      shadowColor: 'rgba(0, 40, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#ffd700',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 194;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (234 / 379);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#009432', highlight: '#f5f6fa', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#009432', highlight: '#f5f6fa', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.islam_mosque.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  islam_mosque_1: {
+    id: 'islam_mosque_1',
+    name: 'Masjid Al-Haram Gold (புனித பள்ளிவாசல் 1)',
+    culture: 'Islamic Sacred',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 124,
+    drawH: 195,
+    yOffset: 0,
+    dataUri: 'islam_mosque_1.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#009432',
+      highlightColor: '#ffd700',
+      shadowColor: 'rgba(0, 40, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#ffd700',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 195;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (249 / 391);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#009432', highlight: '#ffd700', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#009432', highlight: '#ffd700', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.islam_mosque_1.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  islam_calligraphy_medallion: {
+    id: 'islam_calligraphy_medallion',
+    name: 'Allah Sacred Calligraphy (அல்லாஹ் திருநாமம்)',
+    culture: 'Islamic Sacred',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 145,
+    drawH: 186,
+    yOffset: 0,
+    dataUri: 'islam_calligraphy_medallion.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#b8860b',
+      highlightColor: '#f1c40f',
+      shadowColor: 'rgba(40, 30, 0, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#ffd700',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.40,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 186;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (307 / 394);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#b8860b', highlight: '#f1c40f', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 30, 0, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#b8860b', highlight: '#f1c40f', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 30, 0, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.islam_calligraphy_medallion.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  islam_mosque_minaret: {
+    id: 'islam_mosque_minaret',
+    name: 'Luminous Minaret Mosque (மினாரட் மசூதி)',
+    culture: 'Islamic Sacred',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 148,
+    drawH: 190,
+    yOffset: 0,
+    dataUri: 'islam_mosque_minaret.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#009432',
+      highlightColor: '#f5f6fa',
+      shadowColor: 'rgba(0, 40, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#ffd700',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.39,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 190;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (333 / 428);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 148, 50, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#009432', highlight: '#f5f6fa', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#009432', highlight: '#f5f6fa', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.islam_mosque_minaret.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  islam_crescent_lantern: {
+    id: 'islam_crescent_lantern',
+    name: 'Golden Crescent & Lantern (பிறை நிலவு & விளக்கு)',
+    culture: 'Islamic Sacred',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 116,
+    drawH: 190,
+    yOffset: 0,
+    dataUri: 'islam_crescent_lantern.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#e58e26',
+      highlightColor: '#ffd32a',
+      shadowColor: 'rgba(40, 20, 0, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#ffd32a',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 190;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (219 / 358);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(243, 156, 18, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#e58e26', highlight: '#ffd32a', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 20, 0, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#e58e26', highlight: '#ffd32a', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(40, 20, 0, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.islam_crescent_lantern.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  islam_shahada_gold: {
+    id: 'islam_shahada_gold',
+    name: 'Sacred Shahada Shield (புனித கலிமா சின்னம்)',
+    culture: 'Islamic Sacred',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 112,
+    drawH: 190,
+    yOffset: 0,
+    dataUri: 'islam_shahada_gold.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#009432',
+      highlightColor: '#ffd700',
+      shadowColor: 'rgba(0, 40, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#ffd700',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 190;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (201 / 342);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#009432', highlight: '#ffd700', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#009432', highlight: '#ffd700', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.islam_shahada_gold.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  islam_crescent_floral: {
+    id: 'islam_crescent_floral',
+    name: 'Filigree Crescent Moon (அலங்கார பிறை நிலவு)',
+    culture: 'Islamic Sacred',
+    radius: 46,
+    initialY: 200,
+    density: 0.018,
+    restitution: 0.42,
+    knotOffset: -85,
+    drawW: 118,
+    drawH: 190,
+    yOffset: 0,
+    dataUri: 'islam_crescent_floral.png',
+    cord: {
+      width: 3.5,
+      baseColor: '#009432',
+      highlightColor: '#ffd700',
+      shadowColor: 'rgba(0, 40, 10, 0.45)',
+      hasKnotDot: true,
+      knotBaseColor: '#ffd700',
+      knotHighlightColor: '#ffffff',
+      dash: [4, 3]
+    },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.38,
+      angularTorque: 0.075,
+      catchSpeedThreshold: 7.0
+    },
+    stringsState: [
+      { angle: 0, vel: 0, bowX: 0 },
+      { angle: 0, vel: 0, bowX: 0 }
+    ],
+    renderCustom: (ctx, charm, img, state, extraAssets, mousePos) => {
+      const targetH = 190;
+      const aspect = (img && img.naturalWidth && img.naturalHeight) ? (img.naturalWidth / img.naturalHeight) : (209 / 337);
+      const targetW = targetH * aspect;
+      const topY = -85;
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.45)';
+        ctx.shadowBlur = 18;
+        ctx.drawImage(img, -targetW / 2, topY, targetW, targetH);
+        ctx.restore();
+      }
+
+      const bottomY = topY + targetH;
+      const stringConfigs = [
+        { attachX: -14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.12, damping: 0.86, restAngle: -0.06, base: '#009432', highlight: '#ffd700', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' },
+        { attachX: 14, attachY: bottomY - 6, dropLen: 34, stiffness: 0.11, damping: 0.87, restAngle: 0.06, base: '#009432', highlight: '#ffd700', dash: [3, 2], tipColor: '#ffd700', tipRadius: 2.2, width: 2.4, shadowColor: 'rgba(0, 40, 10, 0.30)' }
+      ];
+      drawZeroGravityStrings(ctx, charm, CHARMS.islam_crescent_floral.stringsState, stringConfigs, mousePos || state?.mousePos);
+    }
+  },
+
+  // 10. BUBU & DUDU (CUTE PANDA & BEAR)
+  bubu_1: {
+    id: 'bubu_1',
+    name: 'Bubu Blushing Heart',
+    category: 'bubu_dudu',
+    image: 'bubu_1.png',
+    radius: 42,
+    knotOffset: -45,
+    stringColor: { base: '#EC4899', highlight: '#FBCFE8' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.44,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.2
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 135;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_2: {
+    id: 'bubu_2',
+    name: 'Bubu Joyful Wave',
+    category: 'bubu_dudu',
+    image: 'bubu_2.png',
+    radius: 42,
+    knotOffset: -45,
+    stringColor: { base: '#F472B6', highlight: '#FCE7F3' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.45,
+      angularTorque: 0.09,
+      catchSpeedThreshold: 7.0
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 135;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_3: {
+    id: 'bubu_3',
+    name: 'Bubu Cozy Pillow',
+    category: 'bubu_dudu',
+    image: 'bubu_3.png',
+    radius: 45,
+    knotOffset: -40,
+    stringColor: { base: '#FB7185', highlight: '#FFE4E6' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 175,
+      maxForce: 0.38,
+      angularTorque: 0.06,
+      catchSpeedThreshold: 6.8
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 130;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_4: {
+    id: 'bubu_4',
+    name: 'Bubu Happy Dance',
+    category: 'bubu_dudu',
+    image: 'bubu_4.png',
+    radius: 40,
+    knotOffset: -45,
+    stringColor: { base: '#F43F5E', highlight: '#FDA4AF' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 195,
+      maxForce: 0.48,
+      angularTorque: 0.10,
+      catchSpeedThreshold: 7.5
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 135;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_5: {
+    id: 'bubu_5',
+    name: 'Bubu Warm Winter Hat',
+    category: 'bubu_dudu',
+    image: 'bubu_5.png',
+    radius: 42,
+    knotOffset: -42,
+    stringColor: { base: '#FB923C', highlight: '#FED7AA' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.42,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.0
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 130;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_6: {
+    id: 'bubu_6',
+    name: 'Bubu Sweet Smile',
+    category: 'bubu_dudu',
+    image: 'bubu_6.png',
+    radius: 40,
+    knotOffset: -40,
+    stringColor: { base: '#F472B6', highlight: '#FCE7F3' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.42,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.0
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 130;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_7: {
+    id: 'bubu_7',
+    name: 'Bubu Cheerful Hug',
+    category: 'bubu_dudu',
+    image: 'bubu_7.png',
+    radius: 42,
+    knotOffset: -42,
+    stringColor: { base: '#E11D48', highlight: '#FDA4AF' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.45,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.2
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 135;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_8: {
+    id: 'bubu_8',
+    name: 'Bubu Sparkle Eyes',
+    category: 'bubu_dudu',
+    image: 'bubu_8.png',
+    radius: 42,
+    knotOffset: -45,
+    stringColor: { base: '#A855F7', highlight: '#E9D5FF' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 190,
+      maxForce: 0.46,
+      angularTorque: 0.09,
+      catchSpeedThreshold: 7.4
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 135;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_9: {
+    id: 'bubu_9',
+    name: 'Bubu Playful Wink',
+    category: 'bubu_dudu',
+    image: 'bubu_9.png',
+    radius: 42,
+    knotOffset: -42,
+    stringColor: { base: '#EC4899', highlight: '#FCE7F3' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 190,
+      maxForce: 0.46,
+      angularTorque: 0.09,
+      catchSpeedThreshold: 7.3
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 135;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  dudu_1: {
+    id: 'dudu_1',
+    name: 'Dudu Gentle Brown Bear',
+    category: 'bubu_dudu',
+    image: 'dudu_1.png',
+    radius: 42,
+    knotOffset: -45,
+    stringColor: { base: '#A16207', highlight: '#FEF08A' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 180,
+      maxForce: 0.42,
+      angularTorque: 0.07,
+      catchSpeedThreshold: 7.0
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 135;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  dudu_2: {
+    id: 'dudu_2',
+    name: 'Dudu Sleepy Head',
+    category: 'bubu_dudu',
+    image: 'dudu_2.png',
+    radius: 42,
+    knotOffset: -42,
+    stringColor: { base: '#B45309', highlight: '#FDE68A' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 170,
+      maxForce: 0.36,
+      angularTorque: 0.06,
+      catchSpeedThreshold: 6.5
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 135;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  dudu_3: {
+    id: 'dudu_3',
+    name: 'Dudu Cool Sunglasses',
+    category: 'bubu_dudu',
+    image: 'dudu_3.png',
+    radius: 40,
+    knotOffset: -40,
+    stringColor: { base: '#1E293B', highlight: '#94A3B8' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 190,
+      maxForce: 0.45,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.2
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 130;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  dudu_4: {
+    id: 'dudu_4',
+    name: 'Dudu Silly Winking Bear',
+    category: 'bubu_dudu',
+    image: 'dudu_4.png',
+    radius: 40,
+    knotOffset: -40,
+    stringColor: { base: '#92400E', highlight: '#FDE68A' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.44,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.0
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 130;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_dudu_pair_1: {
+    id: 'bubu_dudu_pair_1',
+    name: 'Bubu & Dudu Sweetheart Hug',
+    category: 'bubu_dudu',
+    image: 'bubu_dudu_pair_1.png',
+    radius: 45,
+    knotOffset: -42,
+    stringColor: { base: '#F43F5E', highlight: '#FDA4AF' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 190,
+      maxForce: 0.46,
+      angularTorque: 0.09,
+      catchSpeedThreshold: 7.2
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 140;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_dudu_pair_2: {
+    id: 'bubu_dudu_pair_2',
+    name: 'Bubu & Dudu Cuddle Duo',
+    category: 'bubu_dudu',
+    image: 'bubu_dudu_pair_2.png',
+    radius: 42,
+    knotOffset: -40,
+    stringColor: { base: '#FB7185', highlight: '#FFE4E6' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.44,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.0
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 135;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_dudu_pair_3: {
+    id: 'bubu_dudu_pair_3',
+    name: 'Bubu & Dudu Teatime Fun',
+    category: 'bubu_dudu',
+    image: 'bubu_dudu_pair_3.png',
+    radius: 42,
+    knotOffset: -40,
+    stringColor: { base: '#F59E0B', highlight: '#FDE68A' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.44,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.0
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 135;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_dudu_pair_4: {
+    id: 'bubu_dudu_pair_4',
+    name: 'Bubu & Dudu Beach Adventure',
+    category: 'bubu_dudu',
+    image: 'bubu_dudu_pair_4.png',
+    radius: 42,
+    knotOffset: -45,
+    stringColor: { base: '#06B6D4', highlight: '#A5F3FC' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 190,
+      maxForce: 0.46,
+      angularTorque: 0.09,
+      catchSpeedThreshold: 7.3
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 140;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_dudu_pair_5: {
+    id: 'bubu_dudu_pair_5',
+    name: 'Bubu & Dudu Straw Hat Trip',
+    category: 'bubu_dudu',
+    image: 'bubu_dudu_pair_5.png',
+    radius: 45,
+    knotOffset: -42,
+    stringColor: { base: '#EAB308', highlight: '#FEF08A' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 185,
+      maxForce: 0.44,
+      angularTorque: 0.08,
+      catchSpeedThreshold: 7.1
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 140;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
+  },
+  bubu_dudu_pair_6: {
+    id: 'bubu_dudu_pair_6',
+    name: 'Bubu & Dudu Forever Friends',
+    category: 'bubu_dudu',
+    image: 'bubu_dudu_pair_6.png',
+    radius: 45,
+    knotOffset: -42,
+    stringColor: { base: '#F43F5E', highlight: '#FDA4AF' },
+    reluctance: {
+      enabled: true,
+      triggerRadius: 190,
+      maxForce: 0.46,
+      angularTorque: 0.09,
+      catchSpeedThreshold: 7.2
+    },
+    renderCustom: (ctx, charm, img) => {
+      if (img && img.complete && img.naturalWidth > 0) {
+        const h = 140;
+        const w = h * (img.naturalWidth / img.naturalHeight);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      }
+    }
   }
 };
+
